@@ -1,0 +1,2 @@
+#The problem is found in t3, in line 8, as it is not possible to divide between 0 and t1 is equal to 0.
+#T1 is equal to zero because we have a multiplication by 0 since g can either be a number or 0 which is set in line 6
