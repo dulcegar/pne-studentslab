@@ -9,3 +9,4 @@ def seq_read_fasta(filename):
     return body
 
 def seq_len(seq):
+    first_line = Path(seq).read_text().find("\n")
