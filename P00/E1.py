@@ -1,1 +1,3 @@
-from seq0 import
+from seq0 import *
+
+seq_ping()
