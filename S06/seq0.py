@@ -8,14 +8,14 @@ def seq_read_fasta(filename):
     body = body.replace("\n", "")
     return body
 
-def seq_len(seq):
+def seq_len(seq = None):
     first_line = Path(seq).read_text().find("\n")
     body = Path(seq).read_text()[first_line:]
     body = body.replace("\n", "")
     return len(body)
-def seq_count_base(seq, base):
-    first_line = Path(seq).read_text().find("\n")
-    body = Path(seq).read_text()[first_line:]
+def seq_count_base(sequence, base = None):
+    first_line = Path(sequence).read_text().find("\n")
+    body = Path(sequence).read_text()[first_line:]
     body = body.replace("\n", "")
     base = len(body)
     return base
