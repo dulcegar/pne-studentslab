@@ -10,12 +10,12 @@ def seq_read_fasta(filename):
 
 def seq_len(seq):
     first_line = Path(seq).read_text().find("\n")
-    body = Path(filename).read_text()[first_line:]
+    body = Path(seq).read_text()[first_line:]
     body = body.replace("\n", "")
     return len(body)
 def seq_count_base(seq, base):
     first_line = Path(seq).read_text().find("\n")
-    body = Path(filename).read_text()[first_line:]
+    body = Path(seq).read_text()[first_line:]
     body = body.replace("\n", "")
     base = len(body)
     return base
