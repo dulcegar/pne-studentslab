@@ -27,10 +27,8 @@ def seq_count(seq):
     return bases
 
 def seq_reverse(seq, n):
-    new_seq = ""
-    for c in range(n):
-        new_seq = seq[c] + new_seq
-    return new_seq
+    seq = seq[::1]
+    return seq[:n]
 
 def seq_complement(seq):
     complement_bases = {"A": "T", "T": "A", "C": "G", "G": "C"}

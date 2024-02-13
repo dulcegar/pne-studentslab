@@ -1,4 +1,4 @@
-from Seq0 import *
+from seq0 import *
 
 seq1 = "ATTCCCGGGG"
 
