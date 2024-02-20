@@ -12,7 +12,7 @@ class car(vehicle):
 class Ferrari(car):
     def __init__(self):
         #call the init of the mother class
-        super().__init__("Ferrari") #con el super llamamos al init del car class
+        super().__init__("Ferrari", 100) #con el super llamamos al init del car class
         self.music = "clasic"
     def make_cabrio(self):
         self.speed = 20
