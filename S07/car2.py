@@ -10,13 +10,17 @@ class car(vehicle):
 
 
 class Ferrari(car):
+    def __init__(self):
+        #call the init of the mother class
+        super().__init__("Ferrari") #con el super llamamos al init del car class
+        self.music = "clasic"
     def make_cabrio(self):
         self.speed = 20
         self.music = "loud"
         return "Wow"
 
 mycar = car("Renault")
-yourcar = Ferrari("Ferrari")   # ---> __init__
+yourcar = Ferrari()   #no ponemos FERRARI dentrpo del parentesis xqe ya hemos creado un init en el class ferrari
 print(yourcar.car_brand)
 yourcar.set_speed(120)
 print(yourcar.speed)  #ferrari no tiene speed definido pero car si entcs si en ferrari no esta, va a car a mirar y sino a vehicle porq dependen d ellas
