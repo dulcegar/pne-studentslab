@@ -1,12 +1,12 @@
 class car:
     #  init is when you move an object to a class.
-    def __init__(self, brand): #self is a parameter of all methos and it is always a parameter. It is the object of a class
+    def __init__(self, brand, speed = 0): #self is a parameter of all methos and it is always a parameter. It is the object of a class
         self.car_brand = brand
-        self.speed = 0
+        self.speed = speed
 
 
     def set_speed(self, speed):
-        self.speed= speed
+        self.speed = speed
 
     def get_speed(self):
         return self.speed
@@ -17,14 +17,19 @@ class car:
         elif self.car_brand == "Ferrari":
             return "Italy"
 
+    def set_age(self, age):
+        self.age = age
 
-mycar = car("Renault")
+    def set_value (self, value):
+        self.value = value
+
+mycar = car("Renault", 30)
 print(mycar.get_speed())
 mycar.set_speed(80)
 print(mycar.get_speed())
 
 print(mycar.get_brand_nationality())
 
-yourcar = car("Ferrari")
+yourcar = car("Ferrari", 250)
 print(yourcar.speed)
 print(yourcar.get_speed())
