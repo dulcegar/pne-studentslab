@@ -10,3 +10,8 @@ try:
     # el os.path.join sirve para que me funcione en linux, macos, windows o el q sea sin que de error
     #las , se traducen com barras, depende de si trabajo en lynux o macos o windows ws / o \
     # se mete en sequences y lgo en el dna_file que basicamente es el input de arriba
+    print(f"The first {N} bases are:")
+    print(dna_sequence[:N])
+
+except IndexError:
+    print(f"[ERROR]: DNA sequence has not almost {N} bases")
