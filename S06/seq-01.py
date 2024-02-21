@@ -9,7 +9,7 @@ class Seq:
     def len(self):
         return len(self.strbases)  #para que me diga la longitud de la cadena de caracteres
 
-""" #HECHO POR MI
+""" #HECHO POR MI de ejemplo
 s = Seq("ATGC")
 print(s)   #estamos llamando de forma implicita la forma str
 print(f"Length of seq: {s.len()}")  #para printear la ongitud de la secuencia
