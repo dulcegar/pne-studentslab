@@ -15,9 +15,11 @@ print(s)   #estamos llamando de forma implicita la forma str
 print(f"Length of seq: {s.len()}")  #para printear la ongitud de la secuencia
 """
 
-s1 = Seq("AGTACACTGGT")   #creando una sequencia
+s1 = Seq("AGTACACTGGT")
 s2 = Seq("CGTAAC")
 
 print(f"Sequence 1: {s1}")
+print(f"  Length: {s1.len()}")
 print(f"Sequence 2: {s2}")
-print("Testing....")
+print(f"  Length: {s2.len()}")
+
