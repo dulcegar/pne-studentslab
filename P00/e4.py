@@ -1,5 +1,5 @@
 import os
-from Seq0 import *
+from seq0 import *
 
 GENES = ["U5", "ADA", "FRAT1", "FXN"]
 BASES = ["A", "C", "T", "G"]
