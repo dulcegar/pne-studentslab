@@ -10,6 +10,6 @@ for gene in GENES:
         dna_sequence = seq_read_fasta(filename)
         print(f"Gene {gene}:")
         for base in BASES:
-            print(f"\t{base}: {seq_count_base(dna_sequence, base)}")
+            print(f"\t{base}: {seq_count_base(dna_sequence, base)}")    #DUDA AQUIIII!!! NO SALE
     except FileNotFoundError:
         print(f"[ERROR]: file '{filename}' not found")
