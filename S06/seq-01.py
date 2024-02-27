@@ -9,6 +9,19 @@ class Seq:
     def len(self):
         return len(self.strbases)  #para que me diga la longitud de la cadena de caracteres
 
+
+class Gene(Seq):   #indicamos que la clase Gene esta heredando de Seq
+    """This class is derived from the Seq Class
+       All the objects of class Gene will inherit
+       the methods from the Seq class
+    """
+    def __init__(self, strbases, name=""):
+        super().__init__(strbases) #aqui estan llamando al constructor de la clase padre, y le estamos pasando las bases de la secuencia porq el ya sabe como usarlas
+        #siempre que creamos un constructor (init) en la clase hija hay q llamar al init de la clase padre
+        self.name = name      #el atributo name es propio de la clase hija
+
+
+
 """ #HECHO POR MI de ejemplo
 s = Seq("ATGC")
 print(s)   #estamos llamando de forma implicita la forma str
