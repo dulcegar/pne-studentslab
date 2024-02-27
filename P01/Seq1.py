@@ -1,5 +1,8 @@
+from pathlib import Path
+
 class Seq:
     bases = ["A", "C", "T", "G"]
+    bases_complement = {"A": "T", "T": "A", "C": "G", "G": "C"}
 
     def __init__(self, strbases = None):
         if strbases is None or len(strbases) == 0:
@@ -11,7 +14,7 @@ class Seq:
             for b in strbases:
                 if b not in Seq.bases:
                     ok = False
-                    self.strbases = "ERROR!"
+                    self.strbases = "ERROR"
                     print("Invalid sequence detected")
                     break
             if ok:
@@ -36,6 +39,38 @@ class Seq:
         for base in Seq.bases:
             bases_appearances[base] = self.count_base(base) #llamamos a count base
         return bases_appearances
+
+    def reverse(self):
+        if self.strbases is "NULL":
+            return "NULL"
+
+        elif self.strbases is "ERROR":
+            return "ERROR"
+        else:
+            new_seq = self.strbases[:]
+            return new_seq[::-1]
+
+    def complement(self):
+        if self.strbases is "NULL":
+            return "NULL"
+
+        elif self.strbases is "ERROR":
+            return "ERROR"
+        else:
+            complement = ""
+            for base in self.strbases:
+                complement += Seq.bases_complement[base]
+            return complement
+
+    def read_fasta(self, filename):
+        first_line = Path(filename).read_text()
+        lines = first_line.splitlines()
+        body = lines[1:]
+        return body
+        dna_sequence = ""
+        for line in body:
+            dna_sequence += line
+        return dna_sequence
 
 class Gene(Seq):
     def __init__(self, strbases, name=""):
