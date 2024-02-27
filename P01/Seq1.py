@@ -31,6 +31,11 @@ class Seq:
             return 0
         return self.strbases.count(base)
 
+    def count(self):
+        bases_appearances = {}
+        for base in Seq.bases:
+            bases_appearances[base] = self.count_base(base) #llamamos a count base
+        return bases_appearances
 
 class Gene(Seq):
     def __init__(self, strbases, name=""):
