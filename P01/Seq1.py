@@ -2,7 +2,7 @@ class Seq:
     bases = ["A", "C", "T", "G"]
 
     def __init__(self, strbases = None):
-        if strbases is None:
+        if strbases is None or len(strbases) == 0:
             self.strbases = "NULL"
             print ("NULL sequence created")
 
@@ -12,7 +12,7 @@ class Seq:
                 if b not in Seq.bases:
                     ok = False
                     self.strbases = "ERROR!"
-                    print("Incorrect sequence detected")
+                    print("Invalid sequence detected")
                     break
             if ok:
                 self.strbases = strbases
@@ -22,7 +22,14 @@ class Seq:
         return self.strbases
 
     def len(self):
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            return 0
         return len(self.strbases)
+
+    def count_base(self, base):
+        if self.strbases == "NULL" or self.strbases == "ERROR":
+            return 0
+        return self.strbases.count(base)
 
 
 class Gene(Seq):
