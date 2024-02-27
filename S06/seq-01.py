@@ -15,11 +15,16 @@ class Gene(Seq):   #indicamos que la clase Gene esta heredando de Seq
        All the objects of class Gene will inherit
        the methods from the Seq class
     """
-    def __init__(self, strbases, name=""):
+    def __init__(self, strbases, name=""): #el self siempre va
         super().__init__(strbases) #aqui estan llamando al constructor de la clase padre, y le estamos pasando las bases de la secuencia porq el ya sabe como usarlas
         #siempre que creamos un constructor (init) en la clase hija hay q llamar al init de la clase padre
         self.name = name      #el atributo name es propio de la clase hija
+        print("New gene created")
 
+        def __str__(self): #el metodo str sirve para devolver una cadena de caracteres con el estado del objeto
+        # no haria falta poner este str porq saldria bien porq hereda el de la clase padre, pero nos piden ponerlo dr una forma en específico: name-bases
+            """Print the Gene name along with the sequence"""
+            return self.name + "-" + self.strbases   #el self.strbases se hereda
 
 
 """ #HECHO POR MI de ejemplo
@@ -28,11 +33,11 @@ print(s)   #estamos llamando de forma implicita la forma str
 print(f"Length of seq: {s.len()}")  #para printear la ongitud de la secuencia
 """
 
-s1 = Seq("AGTACACTGGT")
-s2 = Seq("CGTAAC")
+s = Seq("AGTACACTGGT")
+g = Gene("CGTAAC", "FRAT1")  #probando la clase hija
 
-print(f"Sequence 1: {s1}")
-print(f"  Length: {s1.len()}")
-print(f"Sequence 2: {s2}")
-print(f"  Length: {s2.len()}")
+print(f"Sequence 1: {s}")
+print(f"  Length: {s.len()}")
+print(f"Gene: {g}")
+
 
