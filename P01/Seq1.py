@@ -65,12 +65,9 @@ class Seq:
     def read_fasta(self, filename):
         first_line = Path(filename).read_text()
         lines = first_line.splitlines()
-        body = lines[1:]
-        return body
-        dna_sequence = ""
-        for line in body:
-            dna_sequence += line
-        return dna_sequence
+        self.strbases = lines[1:]
+        "".join(self.strbases)
+        return self.strbases
 
 class Gene(Seq):
     def __init__(self, strbases, name=""):
