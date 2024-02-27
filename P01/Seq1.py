@@ -65,10 +65,20 @@ class Seq:
     def read_fasta(self, filename):
         first_line = Path(filename).read_text()
         lines = first_line.splitlines()
-        self.strbases = lines[1:]
-        "".join(self.strbases)
-        return self.strbases
+        body = lines[1:]
 
+        dna_sequence = ""
+        for line in body:
+            dna_sequence += line
+            self.strbases = dna_sequence
+
+    def max_base(self):
+        bases_dict = {}
+        for b in Seq.bases:
+            bases_dict[b] = self.count_base(b)
+        most_frequent_base = max(bases_dict, key=bases_dict.get)
+
+        return most_frequent_base
 class Gene(Seq):
     def __init__(self, strbases, name=""):
         super().__init__(strbases)

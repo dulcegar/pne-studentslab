@@ -1,22 +1,13 @@
-import os
 from Seq1 import Seq
+import os
 
 PRACTICE = 1
 EXERCISE = 9
 print(F"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
 s = Seq()
-FILENAME = "U5"
-if s == "NULL":
-    print("NULL Seq created")
-else:
-    pass
+Gene = "U5"
+filename = os.path.join("..", "sequences", Gene)
+s.read_fasta(filename)
+print(f"Sequence: (Length: {s.len()}) {s}\nBases: {s.count()}\nRev: {s.reverse()}\nComp: {s.complement()}")
 
-
-
-
-for i, s in enumerate(filename):
-    print(f"Sequence {i + 1}: (Length: {s.len()}) {s}")
-    print(f"\tBases: {s.count()}")
-    print(f"\tRev: {s.reverse()}")
-    print(f"\tComp: {s.complement()}")
