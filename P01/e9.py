@@ -8,6 +8,10 @@ print(F"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 s = Seq()
 Gene = "U5"
 filename = os.path.join("..", "sequences", Gene)
-s.read_fasta(filename)
-print(f"Sequence: (Length: {s.len()}) {s}\nBases: {s.count()}\nRev: {s.reverse()}\nComp: {s.complement()}")
+try:
+    s.read_fasta(filename)
+    print(f"Sequence: (Length: {s.len()}) {s}\nBases: {s.count()}\nRev: {s.reverse()}\nComp: {s.complement()}")
+
+except FileNotFoundError:
+    print(f"[ERROR]: file '{filename}' not found")
 
