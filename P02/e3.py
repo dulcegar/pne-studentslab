@@ -12,4 +12,4 @@ PORT = 8080
 # -- Create a client object
 c = Client(IP, PORT)
 
-print(c)  #este print es para pintar lo que hemos hecho en el def str
+print(c)

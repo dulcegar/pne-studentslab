@@ -7,6 +7,25 @@ class Client:
         print("Ok!")
 
     def __str__(self):
-        print(f"Connection to SERVER at {self.IP}, PORT: {self.PORT}")
-        return self.IP and self.PORT
+        return f"Connection to SERVER at {self.IP}, PORT: {self.PORT}"
+
+    def talk(self,socket):
+        # -- Create the socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # establish the connection to the Server (IP, PORT)
+        s.connect((self.IP, self.PORT))
+
+        # Send data.
+        s.send(str.encode(msg))
+
+        # Receive data
+        response = s.recv(2048).decode("utf-8")
+
+        # Close the socket
+        s.close()
+
+        # Return the response
+        return response
+
 
