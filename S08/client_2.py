@@ -16,9 +16,10 @@ s.connect((SERVER_IP, SERVER_PORT))
 s.send(str.encode("HELLO FROM THE CLIENT!!!"))
 
 # Receive data from the server
-msg = s.recv(2048)
+# esta es la parte distinta que tenemos del client-1
+msg = s.recv(2048)  #el cliente aqui se bloquea (por el recv) y entre parentesis el tamaño del buffer
 print("MESSAGE FROM THE SERVER:\n")
-print(msg.decode("utf-8"))
+print(msg.decode("utf-8"))  #decodifica en utf-8 el mensaje en bytes del servidor
 
 # Closing the socket
 s.close()
