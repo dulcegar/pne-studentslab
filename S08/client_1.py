@@ -5,6 +5,7 @@ import socket #no solo tiene socket el servidor sinp tbn cada uno de los cliente
 # Teacher's server
 SERVER_PORT = 8081 #NO ES EL PUERTO DEL CLIENTE, es el puerto del servidor, nos conectamos al ip y puerto del servidor
 SERVER_IP = ""  # it depends on the machine the server is running
+#ponemos la ip del servidor
 
 
 # First, create the socket
@@ -18,11 +19,11 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((SERVER_IP, SERVER_PORT))
 # atraves de un cliente me conecto al socket del servidor
 #EL CONNECT asocia el socket de nuestro cliente al ip (del servidor) y su propio puerto (nos lo da el sistema operativo, no lo ponemos en ningun lado)
-
+#nos conectamos al ip y al puerto del servidor y a la vez decimos qn es nuestro ip y socket
 
 # Send data. No strings can be sent, only bytes
 # It necesary to encode the string into bytes
 client_socket.send(str.encode("HELLO FROM THE CLIENT!!!"))
 
 # Close the socket
-s.close()
+client_socket.close()
