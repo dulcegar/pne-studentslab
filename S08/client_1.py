@@ -4,7 +4,7 @@ import socket #no solo tiene socket el servidor sinp tbn cada uno de los cliente
 # Write here the correct parameter for connecting to the
 # Teacher's server
 SERVER_PORT = 8081 #NO ES EL PUERTO DEL CLIENTE, es el puerto del servidor, nos conectamos al ip y puerto del servidor
-SERVER_IP = ""  # it depends on the machine the server is running
+SERVER_IP = "127.0.0.1"  # it depends on the machine the server is running
 #ponemos la ip del servidor
 
 

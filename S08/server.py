@@ -2,7 +2,7 @@ import socket #modulo
 
 # Configure the Server's IP and PORT
 PORT = 8081
-IP = ""  # it depends on the machine the server is running
+IP = "127.0.0.1"  # it depends on the machine the server is running
 MAX_OPEN_REQUESTS = 5 #numero maximo de clientes a los que el servidor va a escuchar a la vez. Deetermina el numero maximo de clientes que va a estar conectados a la vez a mi servidor
 
 # Counting the number of connections (numero de conexiones al servidor)
