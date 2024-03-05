@@ -17,13 +17,18 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # establish the connection to the Server (IP, PORT)
 client_socket.connect((SERVER_IP, SERVER_PORT))
-# atraves de un cliente me conecto al socket del servidor
+# a traves de un cliente me conecto al socket del servidor
 #EL CONNECT asocia el socket de nuestro cliente al ip (del servidor) y su propio puerto (nos lo da el sistema operativo, no lo ponemos en ningun lado)
 #nos conectamos al ip y al puerto del servidor y a la vez decimos qn es nuestro ip y socket
+#el connect tiene relacion directa con el .accept del server.py
 
 # Send data. No strings can be sent, only bytes
 # It necesary to encode the string into bytes
 client_socket.send(str.encode("HELLO FROM THE CLIENT!!!"))
+#send: nos estamos conectando con el recv del server.py
+#encode es un metodo estatico de la clase string (porq delante del encode esta el tipo (str))
+#encode coge un string y lo convierte en bytes (0 y 1)
+#una ves tenemos el mensaje como 0 y 1 se envia al servidor y le llega en forma de bytes
 
 # Close the socket
-client_socket.close()
+client_socket.close() #una vez hemos enviado la info. cerramos el canal de comunicacion, cerramos el socket

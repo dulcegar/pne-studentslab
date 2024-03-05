@@ -33,24 +33,33 @@ try:
         #ahora mismo nuestro servidor esta parao esperando la conexion de un cliente, sin dar numeros al (clientsocket, address)
         #necesitamos mandar un cliente (lo creamos --> client_1.py)
 
+        #a partir de aqui saltamos constantemente de servidor a cliente
+        #address en la direccion del cliente, dsd dnd se conecta (IP_client, PORT_client) address es una dupla de la ip y el puerto, el address seria el cartel den nombre del tunel
+        #el clientsocket es el canal de comunicacion entero del cliente, el clientsocket seria la autovia por donde se envia la info del servidor al cliente
+
         # Another connection!e
-        number_con += 1
+        number_con += 1  #incrementa en una unidad el number of connections porq se acaba de conectar un cliente
 
         # Print the connection number
-        print("CONNECTION: {}. From the IP: {}".format(number_con, address))
+        print(f"CONNECTION: {number_con}. From the address (IP and PORT): {address}")
 
         # Read the message from the client, if any
-        msg = clientsocket.recv(2048).decode("utf-8")
-        print("Message from client: {}".format(msg))
+        msg = clientsocket.recv(2048).decode("utf-8")  #a traves del canal de comunicacion con el cliente, recibir como maximo 2048 bytes
+            #recv (receive) es una accion bloqueante al igual que accept
+            #RECEIVE TIENE VINCULACION CON SENT, al igual que accept con connect
+            #una vez llega el mensaje en forma de bytes (tras el .send del client_1.py) receive me devuelve bytes pero decode lo transforma en 0 y 1 a string
+            #decode: decodifica, transforma los 0 y 1 a string
+            #el utf-8 es un formato de string en el q se tiene que decodificar
+        print(f"Message from client: {msg}") #pintamos el servidor en su terminal el mensaje del client
 
-        # Send the message
+        # Send the message, esto tiene efecto en el client-2.py porq en el client-1 no lo tenemos programado lo de recibir un mensaje
         message = "Hello from the teacher's server\n"
-        send_bytes = str.encode(message)
+        message_bytes = str.encode(message) #transformar el mensaje en bytes
         # We must write bytes, not a string
-        clientsocket.send(send_bytes)
-        clientsocket.close()
+        clientsocket.send(message_bytes)  #mandamos el mensaje una vez en bytes al client-2
+        clientsocket.close() #se cierra la conexion cn el cliente, por cada cliente se abre y se cierra
 except socket.error:
-    print("Problems using ip {} port {}. Is the IP correct? Do you have port permission?".format(IP, PORT))
+    print(f"Problems using ip {IP} port {PORT}. Is the IP correct? Do you have port permission")
 except KeyboardInterrupt:
     print("Server stopped by the user")
     serversocket.close()
