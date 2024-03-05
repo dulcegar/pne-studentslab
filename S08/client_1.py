@@ -9,14 +9,20 @@ SERVER_IP = ""  # it depends on the machine the server is running
 
 # First, create the socket
 # We will always use these parameters: AF_INET y SOCK_STREAM
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#estamos creando un socket, es decir un canal de comunicacion en el client socket
+#servidor y cliente tienen cad uno su propio socket
+
 
 # establish the connection to the Server (IP, PORT)
-s.connect((SERVER_IP, SERVER_PORT))
+client_socket.connect((SERVER_IP, SERVER_PORT))
+# atraves de un cliente me conecto al socket del servidor
+#EL CONNECT asocia el socket de nuestro cliente al ip (del servidor) y su propio puerto (nos lo da el sistema operativo, no lo ponemos en ningun lado)
+
 
 # Send data. No strings can be sent, only bytes
 # It necesary to encode the string into bytes
-s.send(str.encode("HELLO FROM THE CLIENT!!!"))
+client_socket.send(str.encode("HELLO FROM THE CLIENT!!!"))
 
 # Close the socket
 s.close()

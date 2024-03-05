@@ -31,7 +31,7 @@ try:
         #serversocket.accept --> el accept permote al socket aceptar un cliente
         #el accept es una instruccion bloqueante y hasta q no se desbloquee no se sigue ejecutando
         #ahora mismo nuestro servidor esta parao esperando la conexion de un cliente, sin dar numeros al (clientsocket, address)
-        #necesitamos mandar un cliente para dar
+        #necesitamos mandar un cliente (lo creamos --> client_1.py)
 
         # Another connection!e
         number_con += 1
