@@ -2,7 +2,7 @@ import socket
 
 # SERVER IP, PORT
 PORT = 8081
-IP = ""  # depends on the computer the server is running
+IP = "127.0.0.1"  # depends on the computer the server is running
 
 while True:
     # -- Ask the user for the message
