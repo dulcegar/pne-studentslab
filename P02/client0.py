@@ -1,5 +1,6 @@
 import socket
 
+
 class Client:
     def __init__(self, SERVER_IP: str, SERVER_PORT: int):  #ese ip y ese puerto son del servidor
         self.SERVER_IP = SERVER_IP
@@ -37,5 +38,6 @@ class Client:
         # Return the response
         return response
 
-
+'''
 c = Client("127.0.0.1", 8081) #ejemplo d crearse un cliente
+'''
