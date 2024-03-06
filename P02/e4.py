@@ -32,5 +32,6 @@ for gene in GENES: #ponemos el for xqe hay unos cuantos
         print(f"To Server: {msg}")
         response = c.talk(msg)
         print(f"From server: \n {response}")
+
     except FileNotFoundError:
         print(f"[ERROR]: file '{filename}' not found")
