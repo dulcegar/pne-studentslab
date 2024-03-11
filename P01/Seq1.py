@@ -7,7 +7,7 @@ class Seq:
     def __init__(self, strbases = None):
         if strbases is None or len(strbases) == 0:
             self.strbases = "NULL"
-            print ("NULL sequence created")
+            print("NULL sequence created")
 
         else:
             ok = True

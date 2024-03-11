@@ -8,7 +8,7 @@ try:
     dna_sequence = seq_read_fasta(os.path.join("..", "sequences", dna_file)) #el os.path nos permite trabajar con rutas en el sistema operativo
     # .. sirve para retroceder, salimos de la carpeta p00 y luego entramos en sequences (despues de la ,)
     # el os.path.join sirve para que me funcione en linux, macos, windows o el q sea sin que de error
-    #las , se traducen com barras, depende de si trabajo en lynux o macos o windows ws / o \
+    #las , se traducen com barras, depende de si trabajo en lynux o macos o windows es / o \
     # se mete en sequences y lgo en el dna_file que basicamente es el input de arriba
     print(f"The first {N} bases are:")
     print(dna_sequence[:N])
