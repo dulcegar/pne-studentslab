@@ -6,15 +6,12 @@ BASES_COMPLEMENT = {"A": "T", "T": "A", "C": "G", "G": "C"}
 def seq_ping():
     print("OK")
 
-def seq_read_fasta(filename):
+def seq_read_fasta(filename): #sirve para leer la secuencia
     first_line = Path(filename).read_text()
     lines = first_line.splitlines()
     body = lines[1:]
+    "".join(body)
     return body
-    dna_sequence = ""
-    for line in body:
-        dna_sequence += line
-    return dna_sequence
 
 def seq_len(seq):
     return len(seq)
