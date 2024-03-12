@@ -76,6 +76,11 @@ class Seq:
                 max_base = base
         return max_base
 
+    def info(self):
+        s = f"Sequence: {self.strbases}\n"
+        s += f"Total length: {self.len()}\n"
+        for base, count in self.count().items(): #el count m devuelve un diccionario
+
 
 class Gene(Seq):
     """This class is derived from the Seq Class
@@ -90,3 +95,6 @@ class Gene(Seq):
     def __str__(self):
         """Print the Gene name along with the sequence"""
         return self.name + "-" + self.strbases
+
+    def name_len(self):
+        return len(self.name)
