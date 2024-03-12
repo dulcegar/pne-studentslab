@@ -39,7 +39,7 @@ class Seq:
     def count(self):
         bases_appearances = {}
         for base in Seq.BASES:
-            bases_appearances[base] = self.count_base(base)
+            bases_appearances[base] = self.count_base(base)  #de count llamamos a count_base
         return bases_appearances
 
     def reverse(self):
@@ -78,8 +78,16 @@ class Seq:
 
     def info(self):
         s = f"Sequence: {self.strbases}\n"
-        s += f"Total length: {self.len()}\n"
+        s += f"Total length: {self.len()}\n" #el += es xqe se le suma algo a la 1 linea
         for base, count in self.count().items(): #el count m devuelve un diccionario
+            if self.len() == 0: #como no se puede dividir entre 0 xqe nos da error, peta el servidor, hay q arreglar ese error
+                percentage = 0
+            else:
+                percentage = (count * 100) / self.len()
+            s += f"{base}: {count} ({percentage:.1f} %)\n"  #la base seria la A y en count el 3, el :.1f es para q tenga 1 solo decimal
+        return s
+
+
 
 
 class Gene(Seq):

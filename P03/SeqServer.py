@@ -3,9 +3,9 @@ import os
 import termcolor
 from seq import Seq
 
-IP = "127.0.0.1"
+IP = "192.168.0.33"
 PORT = 8080
-SEQUENCES = ["ADA", "FRAT1", "FXN", "RNU6_269P", "U5"]
+SEQUENCES = ["AACCGTA", "AAA", "TGAT", "CCGGA", "GGGG"]
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) #para por si esta un port ocupado o ha sido ocupado antes, que no de problema (es opcional)
@@ -30,16 +30,27 @@ try:
             response = "OK!\n"
         elif command == "GET":
             n = int(slices[1])
-            gene = SEQUENCES[n]
-            s = Seq()
-            filename = os.path.join("..", "sequences", gene)
-            s.read_fasta(filename)
+            bases = SEQUENCES[n]
+            s = Seq(bases)
             response = str(s)
         elif command == "INFO":
-            bases = slices[1]   #la posicion 0 es el comando y en la 1 estarian las bases
+            bases = slices[1]  #la posicion 0 es el comando y en la 1 estarian las bases
             s = Seq(bases)
-
-
+            response = s.info() #el info ya lo teniamos creado en Seq.py
+        elif command == "COMP":
+            bases = slices[1]
+            s = Seq(bases)
+            response = s.complement()  #el complement ya lo teniamos creado en Seq.py
+        elif command == "REV":
+            bases = slices[1]
+            s = Seq(bases)
+            response = s.reverse()
+        elif command == "GENE":
+            gene = slices[1] #nombre del gen
+            s = Seq() #me creo la secuencia nula
+            filename = os.path.join("..", "sequences", gene) #me meto en la carpeta
+            s.read_fasta(filename)
+            response = str(s)
 
         print(response)
         response_bytes = response.encode()
