@@ -1,0 +1,10 @@
+- GET /hello HTTP/1.1
+- /hello
+
+- GET /file.html HTTP/1.1
+- /file.html
+
+- GET /hi/there?name=virus&type=corona HTTP/1.1
+- /hi/there
+
+- http://127.0.0.1:8080/dna/u5

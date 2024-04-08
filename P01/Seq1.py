@@ -4,7 +4,7 @@ class Seq:
     bases = ["A", "C", "T", "G"]
     bases_complement = {"A": "T", "T": "A", "C": "G", "G": "C"}
 
-    def __init__(self, strbases = None):
+    def __init__(self, strbases = None):   #lo de dentro del parentesis son atributos
         if strbases is None or len(strbases) == 0:
             self.strbases = "NULL"
             print("NULL sequence created")
@@ -21,7 +21,7 @@ class Seq:
                 self.strbases = strbases
                 print("New sequence created!")
 
-    def __str__(self):
+    def __str__(self):   #para pintar
         return self.strbases
 
     def len(self):
