@@ -9,8 +9,8 @@ PORT = 8080
 
 def process_client(client_socket):
     request_bytes = client_socket.recv(2048)
-    request = request_bytes.decode()
-    lines = request.splitlines()
+    request = request_bytes.decode()   #transformar los butes en una cadena de caracteres
+    lines = request.splitlines()  #genera una lista de las lineas
     request_line = lines[0]
     print("Request line: ", end="")
     termcolor.cprint(request_line, 'green')
