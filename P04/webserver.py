@@ -25,10 +25,10 @@ def process_client(client_socket):
         file_name = os.path.join("html", "index.html")
         body = Path(file_name).read_text()
         status_line = "HTTP/1.1 200 OK\n"
-    elif resource == "/info/A":  #si la persona escribe /info/A en la 2 posicion
-        file_name = os.path.join("html", "A.html") #me crea un string
-        body = Path(file_name).read_text() #el Path es una clase que esta dentro del modulo pathlib. Nos estamos creando un objeto de la clase Path, es la llamda al constructor. Llamos al metodo con read_text y me lee tdo el fichero A.html.
-        status_line = "HTTP/1.1 200 OK\n"  #es la primera linea de la respuesta del servidor. El 200 es el numero del estado
+    elif resource == "/info/A":  #si la persona escribe /info/A  en la 2 posicion
+        file_name = os.path.join("html", "A.html")  # me crea un string
+        body = Path(file_name).read_text()  # el Path es una clase que esta dentro del modulo pathlib. Nos estamos creando un objeto de la clase Path, es la llamda al constructor. Llamos al metodo con read_text y me lee tdo el fichero A.html.
+        status_line = "HTTP/1.1 200 OK\n"  # es la primera linea de la respuesta del servidor. El 200 es el numero del estado
     elif resource == "/info/C":   #basicamente en cada if/elif genera la ruta al fichero que tiene que abrir
         file_name = os.path.join("html", "C.html")
         body = Path(file_name).read_text()
