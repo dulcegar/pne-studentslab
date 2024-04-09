@@ -3,9 +3,11 @@ import termcolor
 from pathlib import Path
 import os
 
-IP = "127.0.0.1"
+IP = "192.168.0.33"
 PORT = 8080
 
+#para comprobar si esta bien hay q poner en google: http://127.0.0.1:8080/info/A yyyy darle al play en el codigo
+#hay que ir cambiando el ip, el puerto y lo que queramos buscar
 
 def process_client(client_socket):
     request_bytes = client_socket.recv(2048)
@@ -19,7 +21,11 @@ def process_client(client_socket):
     resource = slices[1] #path=resource, es el recurso que solicita el cliente al servidor
     version = slices[2] #esta en gris xqe no lo usamos
 
-    if resource == "/info/A":  #si la persona escribe /info/A en la 2 posicion
+    if resource == "/":
+        file_name = os.path.join("html", "index.html")
+        body = Path(file_name).read_text()
+        status_line = "HTTP/1.1 200 OK\n"
+    elif resource == "/info/A":  #si la persona escribe /info/A en la 2 posicion
         file_name = os.path.join("html", "A.html") #me crea un string
         body = Path(file_name).read_text() #el Path es una clase que esta dentro del modulo pathlib. Nos estamos creando un objeto de la clase Path, es la llamda al constructor. Llamos al metodo con read_text y me lee tdo el fichero A.html.
         status_line = "HTTP/1.1 200 OK\n"  #es la primera linea de la respuesta del servidor. El 200 es el numero del estado
@@ -36,7 +42,7 @@ def process_client(client_socket):
         body = Path(file_name).read_text()
         status_line = "HTTP/1.1 200 OK\n"
     else:  #si entramos por el else es porq el resorce que ha pedido el cliente no existe
-        file_name = os.path.join("html", "index.html") #nos pide q el servidor consteste cn una pagina web en blanco (index)
+        file_name = os.path.join("html", "error.html") #en vez de devolver una pag web en blanco, devoldemos el error
         body = Path(file_name).read_text()
         status_line = "HTTP/1.1 404 Not_found\n" #no hay error asociado pero aparece el mensaje
     header = "Content-Type: text/html\n" #me estoy almacenando en la variable header que el servidor va a contestar con un html. de que tipo es el contenido que envia el servidor

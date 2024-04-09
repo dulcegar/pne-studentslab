@@ -3,9 +3,11 @@ import termcolor
 from pathlib import Path
 import os
 
-IP = "127.0.0.1"
+IP = "192.168.0.33"
 PORT = 8080
 
+#para comprobar si esta bien hay q poner en google: http://127.0.0.1:8080/info/A
+#hay que ir cambiando el ip, el puerto y lo que queramos buscar
 
 def process_client(client_socket):
     request_bytes = client_socket.recv(2048)
@@ -36,7 +38,7 @@ def process_client(client_socket):
         body = Path(file_name).read_text()
         status_line = "HTTP/1.1 200 OK\n"
     else:  #si entramos por el else es porq el resorce que ha pedido el cliente no existe
-        file_name = os.path.join("html", "index.html") #nos pide q el servidor consteste cn una pagina web en blanco (index)
+        file_name = os.path.join("html", "error.html") #en vez de devolver una pag web en blanco, devoldemos el error
         body = Path(file_name).read_text()
         status_line = "HTTP/1.1 404 Not_found\n" #no hay error asociado pero aparece el mensaje
     header = "Content-Type: text/html\n" #me estoy almacenando en la variable header que el servidor va a contestar con un html. de que tipo es el contenido que envia el servidor
