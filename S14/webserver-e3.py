@@ -25,7 +25,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 self.send_response(404)
 
         contents_bytes = contents.encode()
-        self.send_header('Content-Type', 'text/html')
+        self.send_header('Content-Type', 'text/html') #como ahora siempre trabajamos con html ponemos text/html.
         self.send_header('Content-Length', str(len(contents_bytes)))
         self.end_headers()
 
