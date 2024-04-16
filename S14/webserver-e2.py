@@ -1,7 +1,7 @@
 import http.server
 import socketserver
 import termcolor
-from pathlib import Path
+from pathlib import Path #lo importamos para trabajar cn las rutas
 
 PORT = 8080
 
@@ -13,11 +13,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         if self.path == "/" or self.path == "/index.html":
-            contents = Path("index.html").read_text()
-            self.send_response(200)
+            contents = Path("index.html").read_text() #ahora almacenamos el contenido de una pagina web
+            self.send_response(200) #ok
         else:
             contents = Path("error.html").read_text()
-            self.send_response(404)
+            self.send_response(404) #error
 
         contents_bytes = contents.encode()
         self.send_header('Content-Type', 'text/html')

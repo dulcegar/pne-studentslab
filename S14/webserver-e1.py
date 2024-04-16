@@ -12,8 +12,8 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         contents = "Resource not available"
-        if self.path == "/":
-            contents = "Welcome to my server"
+        if self.path == "/":  #el path es el recurso solicitado por el cliente, si es / cambio el contents
+            contents = "Welcome to my server" #cambiamos el contents a esto
             self.send_response(200)
         else:
             self.send_response(404)

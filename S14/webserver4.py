@@ -3,7 +3,7 @@ import socketserver
 import termcolor
 
 # Define the Server's port
-PORT = 8080
+PORT = 8080   #para probarlo hay q poner 127.0.0.1:8080
 
 # -- This is for preventing the error: "Port already in use"
 socketserver.TCPServer.allow_reuse_address = True
@@ -29,16 +29,24 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         # Generating the response message
         self.send_response(200)  # -- Status line: OK!
+        #es una herramienta que ya vienne en el basehttprequestserver
+        #el 200 significa tdo okay, yo puedo adarptar el numero q le paso al self response
+        #el self_response ya sabe que mensaje tiene dependiendo del numero que le mando
+        #con esto añadimos la status line ( no tenemos q hacer lo q en otras hemos hecho)
 
         # Define the content-type header:
-        self.send_header('Content-Type', 'text/plain')
-        self.send_header('Content-Length', len(contents.encode()))
+        self.send_header('Content-Type', 'text/plain') #send_header es otro metodo de la clase base...
+        self.send_header('Content-Length', len(contents.encode()))  #lo encode en bytes y lo manda para poner la length
+        #para seguir mandando funciones tendriamos que seguir llamando al send_header
 
         # The header is finished
-        self.end_headers()
+        self.end_headers()  #añade la linea en blanco para separar tdo lo de la cabecera
 
         # Send the response message
-        self.wfile.write(contents.encode())
+        self.wfile.write(contents.encode()) #envia de vuelta el contenido encoded en bytes
+        #el wfile significa Write file (fichero de escritura)
+        #wfile es el sentido que va del servidor al cliente
+        #con rfile es el fichero de lectura
 
         return
 

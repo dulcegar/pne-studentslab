@@ -16,11 +16,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path("index.html").read_text()
             self.send_response(200)
         else:
-            resource = self.path[1:]
+            resource = self.path[1:] # path seria "/myfile.html" y con los [1:] me estoy quedando con "myfile.html"
             try:
-                contents = Path(f"{resource}").read_text()
-                self.send_response(200)
-            except FileNotFoundError:
+                contents = Path(f"{resource}").read_text() #si existe me guardo aqui el contenido
+                self.send_response(200) #esto lo tenemos que poner xqe solo tiene sentido que se ejecute si lo de arriba esta bn, sino salta al error
+            except FileNotFoundError: #si intento abrir el fichero y no existe me saltaria esto
                 contents = Path(f"error.html").read_text()
                 self.send_response(404)
 
