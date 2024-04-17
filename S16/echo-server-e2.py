@@ -39,8 +39,9 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     'capital_letters': 'capital_letters' in arguments,
                     'todisplay': msg_param
                 }    #esta variable es para meterla luego en el context y no meterla a cascoporro
-                contents = read_html_file("result-echo-server-e2.html").render(context=context)
+                contents = read_html_file("result-echo-server-e2.html").render(context=context) #el context rojo es un parametro y el blanco es nuestra variable
 
+                #si no tuviesemos jinja
                 # contents = """
                 #     <!DOCTYPE html>
                 #     <html lang="en">
