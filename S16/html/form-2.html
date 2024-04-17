@@ -11,19 +11,19 @@
       Text input  <input type="text" name="msg">
       <br><br>
       Check button:
-      <input type="checkbox" name="chk">
+      <input type="checkbox" name="chk">  <!-- este es para poner un tic (check) y si le vuelves  adar se quita-->
       <br><br>
-      Radio buttons:
-      <input type="radio" name="base" value="A" checked> A
+      Radio buttons: <!-- lo de escoger a,b,c,d pero siempre sale 1 la a checked-->
+      <input type="radio" name="base" value="A" checked> A  <!-- el name es el mismo en todos para q cnd doy a uno el otro se quita-->
       <input type="radio" name="base" value="C"> C
       <input type="radio" name="base" value="T"> T
       <input type="radio" name="base" value="G"> G
       <br><br>
       Options: <br>
       Choose operation:
-      <select name="operation">
+      <select name="operation"> <!-- una lista desplegable q es de tipo select-->
         <option value="count">Count</option>
-        <option value="perc">Percentage</option>
+        <option value="perc">Percentage</option> <!-- al servidor le llegaria perc, no Percentage-->
       </select>
        <br>
         <input type="submit"/>
