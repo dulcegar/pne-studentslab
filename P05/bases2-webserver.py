@@ -14,41 +14,27 @@ class myHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         resource = self.path
-        if resource == "/" or resource == "/index.html":
-            file_name = os.path.join("html", "index.html")
-            body = Path(file_name).read_text()
-            self.send_response(200)
 
-        elif resource == "/info/A.html":
-            file_name = os.path.join("html", "info", "A.html")
-            body = Path(file_name).read_text()  # el Path es una clase que esta dentro del modulo pathlib. Nos estamos creando un objeto de la clase Path, es la llamda al constructor. Llamos al metodo con read_text y me lee tdo el fichero A.html.
-            self.send_response(200)
+        #nos creamos un diccionario para transformar un recurso en el fichero correspondiente y para resumir tdo el codigo:
+        resource_to_file = {
+            "/": "index.html",
+            "/index.html": "index.html",
+            "/info/A.html": os.path.join("info", "A.html"),
+            "/info/C.html": os.path.join("info", "C.html"),
+            "/info/G.html": os.path.join("info", "G.html"),
+            "/info/T.html": os.path.join("info", "T.html"),
+        }
 
-        elif resource == "/info/C.html":   #basicamente en cada if/elif genera la ruta al fichero que tiene que abrir
-            file_name = os.path.join("html", "info", "C.html")
-            body = Path(file_name).read_text()
-            self.send_response(200)
+        file_name = resource_to_file.get(resource, resource[1:]) #la segunda variable entre los () es lo que devolveriamos a file_name gracias al get y a no ponerlo entre []
+        file_path = os.path.join("html", file_name) #le añadimos html a el file_name al que hemos quitado la barra de alante
 
-        elif resource == "/info/G.html":
-            file_name = os.path.join("html", "info", "G.html")
-            body = Path(file_name).read_text()
+        try:
+            body = Path(file_path).read_text()  # si existe me guardo aqui el contenido
             self.send_response(200)
-
-        elif resource == "/info/T.html":
-            file_name = os.path.join("html", "info", "T.html")
-            body = Path(file_name).read_text()
-            self.send_response(200)
-
-        else:
-            resource = self.path[1:]
-            try:
-                file_name = os.path.join("html", resource)
-                body = Path(file_name).read_text()  # si existe me guardo aqui el contenido
-                self.send_response(200)
-            except FileNotFoundError:
-                file_name = os.path.join("html", "error.html")
-                body = Path(file_name).read_text()
-                self.send_response(404)
+        except FileNotFoundError:
+            file_path = os.path.join("html", "error.html")
+            body = Path(file_path).read_text()
+            self.send_response(404)
 
         body_bytes = body.encode()
         self.send_header('Content-Type', 'text/html')  # como ahora siempre trabajamos con html ponemos text/html.
@@ -58,7 +44,6 @@ class myHandler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(body_bytes)
 
         return
-
 
 
 with socketserver.TCPServer(("", PORT), myHandler) as httpd:
