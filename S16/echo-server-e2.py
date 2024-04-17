@@ -4,6 +4,7 @@ import termcolor
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 import jinja2 as j
+import os
 
 
 def read_html_file(filename):
@@ -28,16 +29,17 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         arguments = parse_qs(url_path.query)
         print(f"Arguments: {arguments}")
         if path == "/":
-            contents = Path(f"{HTML_FOLDER}/form-e2.html").read_text()
+            file_path = os.path.join(HTML_FOLDER, "form-e2.html")
+            contents = Path(file_path).read_text()
             self.send_response(200)
         elif path == "/echo":
             try:
                 msg_param = arguments['msg'][0]
-                context = {
+                context = {     #nos creamos un diccionario con dos parejas clace-valor
                     'capital_letters': 'capital_letters' in arguments,
                     'todisplay': msg_param
-                }
-                contents = read_html_file("result-echo-server-e1.html").render(context=context)
+                }    #esta variable es para meterla luego en el context y no meterla a cascoporro
+                contents = read_html_file("result-echo-server-e2.html").render(context=context)
 
                 # contents = """
                 #     <!DOCTYPE html>
@@ -59,10 +61,12 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 #     </html>"""
                 self.send_response(200)
             except (KeyError, IndexError):
-                contents = Path(f"{HTML_FOLDER}/error.html").read_text()
+                file_path = os.path.join(HTML_FOLDER, "error.html")
+                contents = Path(file_path).read_text()
                 self.send_response(404)
         else:
-            contents = Path(f"{HTML_FOLDER}/error.html").read_text()
+            file_path = os.path.join(HTML_FOLDER, "error.html")
+            contents = Path(file_path).read_text()
             self.send_response(404)
 
         contents_bytes = contents.encode()
