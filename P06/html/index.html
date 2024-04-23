@@ -5,41 +5,42 @@
         <title>Seq2 Server</title>
     </head>
     <body>
-        <h1>Seq2 Server</h1>
+        <h1>Seq2 Server</h1>  <!--esta es la pestañita-->
         <p>Access to the server</p>
-        <hr>
-        <form action="/ping" method="get">   <!--cn el action le mandamos al ping.httml-->
-         Is the server alive? <input type="submit" value="PING">
+        <hr>   <!--esta etiqueta es para poner las lineas rectas que aparecen -->
+        <form action="/ping" method="get">   <!--cn el action le mandamos al ping.httml, y el metodo siempre es get-->
+         Is the server alive? <input type="submit" value="PING">  <!-- un input del tipo submit que tiene nombre PING-->
         </form>
         <hr>
 
         <form action="/get" method="get">
              Get a sequence. Select a sequence number:
-            <select name="sequence_number">
-                {% for n in range(0, context.n_sequences) %}
-                <option value={{n}}>{{n}}</option>
+            <select name="sequence_number"> <!-- generamos etiquetas option por cada valor (0,1,2,3,4) -->
+                {% for n in range(0, context.n_sequences) %} <!-- un rango de 0 a un numero q esta en el servidor, el numero de secuencias de dentro de el dicciomario context-->
+                    <option value={{n}}>{{n}}</option> <!--me hace un rango del 0 al 4 (5 secuencias), esto es para hacer las opciones -->
                 {% endfor %}
             </select>
-            <input type="submit" value="GET">
+            <input type="submit" value="GET"> <!--boton de envio-->
         </form>
         <hr>
 
         <form action="/gene" method="get">
              Get a sequence. Select a sequence number:
             <select name="gene_name">
-                {% for g in context.genes %}
-                <option value={{g}}>{{g}}</option>
+                {% for g in context.genes %} <!-- este for no  tiene range (como el anterior) simplemente es una lista con las distintas secuencias, me permite recorrer las distintas secuencias-->
+                    <option value={{g}}>{{g}}</option>
                 {% endfor %}
             </select>
             <input type="submit" value="GENE">
         </form>
         <hr>
-        <form action="/operation" method="get">
+
+        <form action="/operation" method="get">  <!-- nos mete en el operation.html-->
             Write a sequence:
             <input type="text" name="bases">
             <br>
             Select an operation:
-            <input type="radio" name="op" value="info" checked> Info
+            <input type="radio" name="op" value="info" checked> Info  <!-- mismo nombre para que esten todos vinculado al mismo elemento y no se pueda escoger mas de uno a la vez-->
             <input type="radio" name="op" value="comp"> Comp
             <input type="radio" name="op" value="rev"> Rev
             <br>

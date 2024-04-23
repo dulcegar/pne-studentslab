@@ -6,11 +6,11 @@
     </head>
     <body>
         <h1>Echoing the receiving message:</h1>
-        {{if context.capital_letters:}}
+        {% if context.capital_letters %}
             <p>{{context.todisplay.upper()}}</p>
-        {{else:}}
+        {% else %}
             <p>{{context.todisplay}}</p>
-        {{endif}} <!--esto se mete para terminar los if-->
+        {% endif %}
         <a href="/">Main page</a>
     </body>
 </html>

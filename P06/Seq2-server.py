@@ -17,13 +17,13 @@ OPERATIONS = ["info", "comp", "rev"]
 
 
 def read_html_template(file_name):
-    file_path = os.path.join(HTML_FOLDER, file_name)
-    contents = Path(file_path).read_text()
-    contents = jinja2.Template(contents)
-    return contents
+    file_path = os.path.join(HTML_FOLDER, file_name) #recib el nombre de un fichero dentro de la carpeta html
+    contents = Path(file_path).read_text() #lee el fichero
+    contents = jinja2.Template(contents)  #nos creamos un objeto de la clase Template del jinja dos a la que le pasamos la variable contents
+    return contents  #devolvemos el valor de la clase contents, es decir el objeto de la clase Template de la plantilla que yo le mandado
 
 
-def handle_get(arguments):
+def handle_get(arguments):  #basicamente es para poner el codigo de do_GET mas bonito
     try:
         sequence_number = int(arguments['sequence_number'][0])
         file_path = os.path.join(HTML_FOLDER, "get.html")
@@ -46,15 +46,15 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         termcolor.cprint(self.requestline, 'green')
 
-        parsed_url = urlparse(self.path)
-        resource = parsed_url.path  # path
-        print(f"Resource: {resource}")
-        arguments = parse_qs(parsed_url.query)
+        parsed_url = urlparse(self.path)  #trocea la ruta que recibimos cuando el cliente manda una peticion
+        resource = parsed_url.path  #tbn podemos llamar a la variable path
+        print(f"Resource: {resource}")  #si el cliente le da al boton ping, se recibe /ping
+        arguments = parse_qs(parsed_url.query) #un diccionario con los argumentos/parametros que nos llega en la peticion
         print(f"Arguments: {arguments}")
 
         if resource == "/":  # or resource == "/index.html":
             contents = read_html_template("index.html")
-            context = {'n_sequences': len(SEQUENCES), 'genes': GENES}
+            context = {'n_sequences': len(SEQUENCES), 'genes': GENES} #esto es lo q luego usamos en el html (el n_sequences y el genes)
             contents = contents.render(context=context)
             self.send_response(200)
         elif resource == "/ping":
