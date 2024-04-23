@@ -55,7 +55,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         if resource == "/":  # or resource == "/index.html":
             contents = read_html_template("index.html")
             context = {'n_sequences': len(SEQUENCES), 'genes': GENES} #esto es lo q luego usamos en el html (el n_sequences y el genes)
-            contents = contents.render(context=context)
+            contents = contents.render(context=context) #le decimos que se renderice=actualice
             self.send_response(200)
         elif resource == "/ping":
             file_path = os.path.join(HTML_FOLDER, "ping.html")
