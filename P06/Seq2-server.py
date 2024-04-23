@@ -25,11 +25,9 @@ def read_html_template(file_name):
 
 def handle_get(arguments):  #basicamente es para poner el codigo de do_GET mas bonito
     try:
-        sequence_number = int(arguments['sequence_number'][0])
-        file_path = os.path.join(HTML_FOLDER, "get.html")
-        contents = Path(file_path).read_text()
-        contents = jinja2.Template(contents)
-        context = {'number': sequence_number, 'sequence': SEQUENCES[sequence_number]}
+        sequence_number = int(arguments['sequence_number'][0]) #accedemos al valor asociado a arguments, lo cambiamos a int porq queremos pedir una posicion de la lista
+        contents = read_html_template("get.html")  #llamo a la funcion de antes (read_html_template) porq necesitamos tdo lo q tiene dentro
+        context = {'number': sequence_number, 'sequence': SEQUENCES[sequence_number]} #de la lista SEQUENCES se mete en la posicion que pidan
         contents = contents.render(context=context)
         code = HTTPStatus.OK  #como hemos importado el http, podemos usar esto en vez del 200
     except (KeyError, IndexError, ValueError):
@@ -66,36 +64,34 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(code)
         elif resource == "/gene":
             try:
-                gene_name = arguments['gene_name'][0]
+                gene_name = arguments['gene_name'][0] #no lo convierto a un entero xqe estamos pidiendo un string (frat1, ada...)
                 file_path = os.path.join(HTML_FOLDER, "gene.html")
                 contents = Path(file_path).read_text()
                 contents = jinja2.Template(contents)
-                file_name = os.path.join("..", "sequences", gene_name + ".txt")
-                s = Seq()
-                s.read_fasta(file_name)
-                context = {'gene_name': gene_name, 'sequence': str(s)}
+                file_name = os.path.join("..", "sequences", gene_name) #para meterse en la carpeta sequences ( q esya fuera de la practica 6)
+                s = Seq() #crea un objeto de la clase Seq de secuencia nula, no tiene valor aun strbases
+                s.read_fasta(file_name)  #se le da valor a strbases
+                context = {'gene_name': gene_name, 'sequence': str(s)} #se pone el nombre del gene q hemos pedido y luego se convierte en string la secuencia
                 contents = contents.render(context=context)
                 self.send_response(200)
             except (KeyError, IndexError, FileNotFoundError):
                 file_path = os.path.join(HTML_FOLDER, "error.html")
                 contents = Path(file_path).read_text()
                 self.send_response(404)
-        elif resource == "/operation":
+        elif resource == "/operation":  #en este tipo el cliente manda dos cosas, las bases y op
             try:
-                bases = arguments['bases'][0]
-                op = arguments['op'][0]  # lower()
-                file_path = os.path.join(HTML_FOLDER, "operation.html")
-                contents = Path(file_path).read_text()
-                contents = jinja2.Template(contents)
-                s = Seq(bases)
-                if op in OPERATIONS:
+                bases = arguments['bases'][0] #basicamente coge lo que introduce el cliente en el campo de texto
+                op = arguments['op'][0]  # lower()   #le mandamos la operacion q haya puesto el cliente, el op puede ser info, comp o rev (MINUSCULAS)
+                contents = read_html_template("operation.html")
+                s = Seq(bases) #nos creamos un objeto de la clase Seq con las bases que haya mandado el cliente
+                if op in OPERATIONS:  #si la operacion que quiere el usuario esta en la lista de arriba (dnd hemos puesto las tres q usamos), este if es por si el usuario intenta trolearnos a traves de la url
                     if op == "info":
-                        result = s.info().replace("\n", "<br><br>")
+                        result = s.info().replace("\n", "<br><br>")  #nos devuelve lo que tiene el def info en seq, con el replace sustituimos cada /n con dos saltos de linea pero en html
                     elif op == "comp":
-                        result = s.complement()
+                        result = s.complement()  #cogemos el objeto de seq y llamamos a complement
                     else:  # elif op == "rev":
                         result = s.reverse()
-                    context = {'sequence': str(s), 'op': op, 'result': result}
+                    context = {'sequence': str(s), 'op': op, 'result': result} #creamos el contexto para comunicarnos con ña pagina web y q luego se sustituya
                     contents = contents.render(context=context)
                     self.send_response(200)
                 else:
@@ -127,3 +123,4 @@ with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
         print()
         print("Stopped by the user")
         httpd.server_close()
+

@@ -77,8 +77,7 @@ class Seq:
         return max_base
 
     def info(self):
-        s = f"Sequence: {self.strbases}\n"
-        s += f"Total length: {self.len()}\n" #el += es xqe se le suma algo a la 1 linea
+        s = f"Total length: {self.len()}\n"
         for base, count in self.count().items(): #el count m devuelve un diccionario
             if self.len() == 0: #como no se puede dividir entre 0 xqe nos da error, peta el servidor, hay q arreglar ese error
                 percentage = 0
