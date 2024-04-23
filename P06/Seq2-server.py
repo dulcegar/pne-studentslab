@@ -52,17 +52,17 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         arguments = parse_qs(parsed_url.query) #un diccionario con los argumentos/parametros que nos llega en la peticion
         print(f"Arguments: {arguments}")
 
-        if resource == "/":  # or resource == "/index.html":
+        if resource == "/":  #or resource == "/index.html":
             contents = read_html_template("index.html")
             context = {'n_sequences': len(SEQUENCES), 'genes': GENES} #esto es lo q luego usamos en el html (el n_sequences y el genes)
             contents = contents.render(context=context) #le decimos que se renderice=actualice
             self.send_response(200)
-        elif resource == "/ping":
+        elif resource == "/ping": #en este no llamamos al read_html_template xqe no hay variables que leer
             file_path = os.path.join(HTML_FOLDER, "ping.html")
-            contents = Path(file_path).read_text()
-            self.send_response(200)
+            contents = Path(file_path).read_text()   #creo el objeto de tipo path con esa ruta (file_path)
+            self.send_response(200)  #tbn se podrias poner self.send_response(HTTPStatus.OK)
         elif resource == "/get":
-            contents, code = handle_get(arguments)
+            contents, code = handle_get(arguments)   #hay dos variables a la izq del = porq lo q nos devuelve el handle_get es una dupla, nos devuelve dos cosas, la 1 una cadena de caractereces y la 2 es un numero entero
             self.send_response(code)
         elif resource == "/gene":
             try:
@@ -111,7 +111,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             contents = Path(file_path).read_text()
             self.send_response(404)
 
-        contents_bytes = contents.encode()
+        contents_bytes = contents.encode() #transformacion de nuestro body a bytes
         self.send_header('Content-Type', 'text/html')
         self.send_header('Content-Length', str(len(contents_bytes)))
         self.end_headers()
