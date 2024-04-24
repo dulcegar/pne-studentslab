@@ -26,7 +26,10 @@ r1 = conn.getresponse()  #para obtener la respuesta del servidor usamos getrespo
 print(f"Response received!: {r1.status} {r1.reason}\n")  #el r1.reason es el texto asociado al cogido (200=OK...)
 
 # -- Read the response's body
-data1 = r1.read().decode("utf-8")
+data1 = r1.read().decode("utf-8")  #si el servidor me ha mandado un cuerpo en la respuesta el r1.read lee los bytes del cuerpo y luego los traduce (decode) a un string
+#data1 es de tipo string ahora
 
 # -- Print the received data
 print(f"CONTENT: {data1}")
+
+#TODO ESTO LO HACIA HASTA AHORA EL NAVEGADOR WEB POR NOSOTROS

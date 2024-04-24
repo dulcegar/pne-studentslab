@@ -1,3 +1,4 @@
+#es igual que el json-server pero la linea 34 es distinta xqe cambia el fichero json al que entramos
 import http.server
 import socketserver
 import termcolor
