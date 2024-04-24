@@ -17,7 +17,7 @@ GENES = {
 }
 
 print()
-for gene in GENES:
+for gene in GENES: #recorremos tod el diccionario para sacar la informacion de todos
     SERVER = 'rest.ensembl.org'
     RESOURCE = f'/sequence/id/{GENES[gene]}'
     PARAMS = '?content-type=application/json'
@@ -44,4 +44,4 @@ for gene in GENES:
         print(f"Description: {data['desc']}")
         bases = data['seq']
         s = Seq(bases)
-        print(s.info())
+        print(s.info())  #hay q printear la info de todos

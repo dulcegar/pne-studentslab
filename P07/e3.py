@@ -38,7 +38,7 @@ response = conn.getresponse()  #tenemos la respuesta
 print(f"Response received!: {response.status} {response.reason}\n")
 if response.status == HTTPStatus.OK:
     data_str = response.read().decode("utf-8")   #leo lo q m llega como string y lo traduzco
-    print(data_str) #para ver la info q nos llega y saber q pedir
+    print(data_str) #para ver la info q nos llega y saber q pedir dependiendo de lo q nos pidan en el ejercicio
     data = json.loads(data_str) #lo convierto en diccionario y json, previamente haciedno un print de la info q nos llega
     print() #espacio en blanco pa separar
     print(f"Gene: {GENE}")

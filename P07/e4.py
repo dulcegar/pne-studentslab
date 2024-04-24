@@ -1,8 +1,9 @@
 import http.client
 import json
 from http import HTTPStatus
-from seq import Seq
+from seq import Seq  #aqui ahora usamos el seq
 
+#en este, el usuario introduce el nombre de un gen y hace lo mismo q en el e3
 GENES = {
     "FRAT1": "ENSG00000165879",
     "ADA": "ENSG00000196839",
@@ -17,8 +18,8 @@ GENES = {
 }
 
 print()
-gene = input("Write the gene name: ")
-if gene in GENES:
+gene = input("Write the gene name: ") #le pedimos al usuario el nombre de un gen
+if gene in GENES: #comprobamos q el gen esta dentro del diccionario
     SERVER = 'rest.ensembl.org'
     RESOURCE = f'/sequence/id/{GENES[gene]}'
     PARAMS = '?content-type=application/json'
@@ -37,12 +38,12 @@ if gene in GENES:
         exit()
 
     response = conn.getresponse()
-    print(f"Response received!: {response.status} {response.reason}\n")
+    print(f"Response received!: {response.status} {response.reason}\n") #printamos el status y el reason
     if response.status == HTTPStatus.OK:
         data_str = response.read().decode("utf-8")
         data = json.loads(data_str)
         print(f"Gene: {gene}")
         print(f"Description: {data['desc']}")
-        bases = data['seq']
-        s = Seq(bases)
-        print(s.info())
+        bases = data['seq'] #cogemos las bases de la secuencia
+        s = Seq(bases) #nos creamos una variable nuestra de la clase seq
+        print(s.info()) #llamamos al metodo info (dentro de seq) porq nos piden su informacion
