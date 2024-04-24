@@ -29,7 +29,7 @@ data1 = r1.read().decode("utf-8")
 
 # -- Create a variable with the data,
 # -- form the JSON received
-people = json.loads(data1)['people']
+people = json.loads(data1)['people']  #nos llega la informacion de la red, no la leemos del fichero
 
 print("CONTENT: ")
 
