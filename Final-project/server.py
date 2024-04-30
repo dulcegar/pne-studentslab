@@ -51,10 +51,10 @@ def handle_error(endpoint, message): #le mandamos el resource(endpoint) y el men
     return read_html_template("error.html").render(context=d) #nos devuelve un string con el contenido de la plantilla html sustituyendo lo que es variable
 
 
-def list_species(endpoint, parameters):
-    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-    url = f"{request['resource']}?{request['params']}"
-    error, data = server_request(EMSEMBL_SERVER, url)
+def list_species(endpoint, parameters): #le pasamos esto al if de listspecies
+    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint] #consulta que le hacemos al diccionario, le pasamos el endpoint (depende del if en el que nos metamos)
+    url = f"{request['resource']}?{request['params']}" #nos almacenamos en la variable url un string con el request (diccionario), por un lado el resource y por otro los parametros
+    error, data = server_request(EMSEMBL_SERVER, url) #nos hemos creado la funcion server_request q permite la comunicacion con el servidor de ensembl y asi no ponerlo tdo el rato en cada tipo de edpoint, y le pasamos a q servidor me voy a conectar y la url d la funcion, Nos devuelve si ha habido error en la comunicacion y los datos
     if not error:
         limit = None
         if 'limit' in parameters:
