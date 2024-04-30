@@ -7,14 +7,15 @@ from urllib.parse import urlparse, parse_qs
 import jinja2
 import os
 import json
+import http.client
 
 
 PORT = 8080
 HTML_FOLDER = "html"
-EMSEMBL_SERVER = "rest.ensembl.org"
+EMSEMBL_SERVER = "rest.ensembl.org" #nos almacenamos la ip del servidor de ensembl
 RESOURCE_TO_ENSEMBL_REQUEST = {
     '/listSpecies': {'resource': "/info/species", 'params': "content-type=application/json"}
-}
+}   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
 
@@ -26,8 +27,7 @@ def read_html_template(file_name):
     return contents
 
 
-def server_request(server, url):
-    import http.client
+def server_request(server, url): #esta funcion nos permite pedirle algo al servidor de ensembl y q nos conteste
 
     error = False
     data = None
@@ -43,7 +43,7 @@ def server_request(server, url):
     return error, data
 
 
-def handle_error(endpoint, message):
+def handle_error(endpoint, message): #le mandamos el resource(endpoint) y el mensaje que varia segun el error
     context = {
         'endpoint': endpoint,
         'message': message
@@ -84,15 +84,15 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         parsed_url = urlparse(self.path)
-        endpoint = parsed_url.path  # resource or path
+        endpoint = parsed_url.path  #resource or path
         print(f"Endpoint: {endpoint}")
         parameters = parse_qs(parsed_url.query)
         print(f"Parameters: {parameters}")
 
-        code = HTTPStatus.OK
+        code = HTTPStatus.OK #de primeras esta variable y si hay error lo cambiamos ahi
         content_type = "text/html"
         contents = ""
-        if endpoint == "/":
+        if endpoint == "/":  #en vez de resource o path, endpoint
             file_path = os.path.join(HTML_FOLDER, "index.html")
             contents = Path(file_path).read_text()
         elif endpoint == "/listSpecies":
@@ -102,10 +102,10 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif endpoint == "/chromosomeLength":
             pass
         else:
-            contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR)
+            contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
 
-        self.send_response(code)
+        self.send_response(code) #lo ponemos aqui una sola vez en vez de en cada if/elif
         contents_bytes = contents.encode()
         self.send_header('Content-Type', content_type)
         self.send_header('Content-Length', str(len(contents_bytes)))
@@ -113,11 +113,11 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         self.wfile.write(contents_bytes)
 
-
+#PROGRAMA PRINCIPAL
 with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
     print("Serving at PORT...", PORT)
     try:
-        httpd.serve_forever()
+        httpd.serve_forever()  #es un metodo que contiene TCPServer
     except KeyboardInterrupt:
         print()
         print("Stopped by the user")
