@@ -44,11 +44,11 @@ def server_request(server, url): #esta funcion nos permite pedirle algo al servi
 
 
 def handle_error(endpoint, message): #le mandamos el resource(endpoint) y el mensaje que varia segun el error
-    context = {
+    d = {  #me creo un diccionario
         'endpoint': endpoint,
         'message': message
     }
-    return read_html_template("error.html").render(context=context)
+    return read_html_template("error.html").render(context=d) #nos devuelve un string con el contenido de la plantilla html sustituyendo lo que es variable
 
 
 def list_species(endpoint, parameters):
@@ -72,7 +72,7 @@ def list_species(endpoint, parameters):
         code = HTTPStatus.OK
     else:
         contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
-        code = HTTPStatus.SERVICE_UNAVAILABLE  # Comment
+        code = HTTPStatus.SERVICE_UNAVAILABLE  #decimos que el servicio que solicita no esta available
     return code, contents
 
 
@@ -98,9 +98,9 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif endpoint == "/listSpecies":
             code, contents = list_species(endpoint, parameters)
         elif endpoint == "/karyotype":
-            pass
+            code, contents = karyotype(endpoint, parameters)
         elif endpoint == "/chromosomeLength":
-            pass
+            code, contents = chromosomeLength(endpoint, parameters)
         else:
             contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
