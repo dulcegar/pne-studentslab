@@ -95,7 +95,7 @@ def karyotype(endpoint, parameters):
         code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
-def chromosome_length(endpoint, parameters):
+def chromosome_length(endpoint, parameters):  #ME QUEDA TERMINAR ESTE
     request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
     species = parameters["species"][0]
     url = f"{request['resource']}/{species}?{request['params']}"
