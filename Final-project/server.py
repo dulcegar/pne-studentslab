@@ -80,7 +80,7 @@ def list_species(endpoint, parameters): #le pasamos esto al if de listspecies, l
 
 def karyotype(endpoint, parameters):
     request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-    species = parameters["species"]
+    species = parameters["species"][0]
     url = f"{request['resource']}/{species}?{request['params']}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
