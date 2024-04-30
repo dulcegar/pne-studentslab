@@ -14,7 +14,8 @@ PORT = 8080
 HTML_FOLDER = "html"
 EMSEMBL_SERVER = "rest.ensembl.org" #nos almacenamos la ip del servidor de ensembl
 RESOURCE_TO_ENSEMBL_REQUEST = {
-    '/listSpecies': {'resource': "/info/species", 'params': "content-type=application/json"}
+    '/listSpecies': {'resource': "/info/species", 'params': "content-type=application/json"},
+    '/karyotype': {'resource': "/info/assembly", 'params': "content-type=application/json"}
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
@@ -62,10 +63,10 @@ def list_species(endpoint, parameters): #le pasamos esto al if de listspecies, l
         if 'limit' in parameters: #si mi diccionario con los parametros contiene la clave limit, me llega limite
             limit = int(parameters['limit'][0]) #le cambiamos el valor de limit (q en principio es None) y lo transformamos a un entero
         species = data['species']  # list<dict>
-        name_species = []
-        for specie in species[:limit]:
-            name_species.append(specie['display_name'])
-        context = {
+        name_species = [] #lista vacia
+        for specie in species[:limit]: #con este for recorro la lista de diccionario (de especies) de especie en especie, lo de [:limit] es xqe lo estoy acotando
+            name_species.append(specie['display_name']) #en esa lista me guardo el nombre asociado al display_name
+        context = { #nos creamos un diccionario con el contexto con parejas clave-valor, que luego lo usamos en el html list_species
             'number_of_species': len(species),
             'limit': limit,
             'name_species': name_species
@@ -75,6 +76,23 @@ def list_species(endpoint, parameters): #le pasamos esto al if de listspecies, l
     else:
         contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
         code = HTTPStatus.SERVICE_UNAVAILABLE  #decimos que el servicio que solicita no esta available
+    return code, contents
+
+def karyotype(endpoint, parameters):
+    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
+    species = parameters["species"]
+    url = f"{request['resource']}/{species}?{request['params']}"
+    error, data = server_request(EMSEMBL_SERVER, url)
+    if not error:
+        context = {
+            'species': species,
+            'karyotype': data['karyotype']
+        }
+        contents = read_html_template("karyotype.html").render(context=context)
+        code = HTTPStatus.OK
+    else:
+        contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
+        code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
 
