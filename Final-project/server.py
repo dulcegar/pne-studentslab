@@ -29,16 +29,18 @@ def read_html_template(file_name):
 
 def server_request(server, url): #esta funcion nos permite pedirle algo al servidor de ensembl y q nos conteste
 
-    error = False
+    error = False #ponemos inicialmente q no va a haber error
     data = None
     try:
-        connection = http.client.HTTPSConnection(server)
-        connection.request("GET", url)
-        response = connection.getresponse()
+        conn = http.client.HTTPSConnection(server) #nos crea un objeto del tipo http.client.HTTPSConnection y le mandamos el server (nuestro)
+        conn.request("GET", url) #coge el objeto y le hacemos una request del tipo GET y le pasamos la URL
+        response = conn.getresponse()
         if response.status == HTTPStatus.OK:
             json_str = response.read().decode()
             data = json.loads(json_str)
-    except Exception:  # Comment
+        else:
+            error = True
+    except Exception:
         error = True
     return error, data
 
@@ -54,11 +56,11 @@ def handle_error(endpoint, message): #le mandamos el resource(endpoint) y el men
 def list_species(endpoint, parameters): #le pasamos esto al if de listspecies, las 4 siguientes lineas estaran en todas las deficiones (karyotype y chromosomalLength)
     request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint] #consulta que le hacemos al diccionario, le pasamos el endpoint (depende del if en el que nos metamos)
     url = f"{request['resource']}?{request['params']}" #nos almacenamos en la variable url un string con el request (diccionario), por un lado el resource y por otro los parametros
-    error, data = server_request(EMSEMBL_SERVER, url) #nos hemos creado la funcion server_request q permite la comunicacion con el servidor de ensembl y asi no ponerlo tdo el rato en cada tipo de edpoint, y le pasamos a q servidor me voy a conectar y la url d la funcion, Nos devuelve si ha habido error en la comunicacion y los datos
+    error, data = server_request(EMSEMBL_SERVER, url) #nos hemos creado la funcion server_request q permite la comunicacion con el servidor de ensembl y asi no ponerlo tdo el rato en cada tipo de endpoint, y le pasamos a q servidor me voy a conectar y la url d la funcion, Nos devuelve si ha habido error en la comunicacion y los datos
     if not error:
         limit = None
-        if 'limit' in parameters:
-            limit = int(parameters['limit'][0])
+        if 'limit' in parameters: #si mi diccionario con los parametros contiene la clave limit, me llega limite
+            limit = int(parameters['limit'][0]) #le cambiamos el valor de limit (q en principio es None) y lo transformamos a un entero
         species = data['species']  # list<dict>
         name_species = []
         for specie in species[:limit]:
