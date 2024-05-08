@@ -145,7 +145,7 @@ def geneSeq(parameters):
     print(f"Gene: {gene} - Gene ID: {gene_id}") #pinto el nombre del gen y su identificador, simplemente para verlo en el servidor
     if gene_id is not None: #si la variable gene_id tiene contenido, es decir, si es distinto de None
         request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-        url = f"{request['resource']}/{gene_id}?{request['params']}" #construyo la url con el id, para ahora poder hacer la culta buena con el identificador del gen que nos manden, por eso hacemos antes lo de gene_id
+        url = f"{request['resource']}/{gene_id}?{request['params']}" #construyo la url con el id, para ahora poder hacer la culta buena con el identificador del gen que nos manden, por eso hacemos antes lo de get_id
         error, data = server_request(EMSEMBL_SERVER, url) #peticion al servidor de ensembl
         if not error:
             bases = data['seq'] #dentro de la data q me da ensembl tiene que haber un diccionario llamado seq, con todas las bases de la secuencia para que me las mande
