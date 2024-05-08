@@ -10,7 +10,7 @@ try:
     fragment = dna_sequence[:N]
     print(f"Gene {GENE}")
     print(f"Fragment: {fragment}")
-    print(f"Complement: {seq_complement(fragment)}")          #DUDA!
+    print(f"Complement: {seq_complement(fragment)}")
 except FileNotFoundError:
     print(f"[ERROR]: file '{filename}' not found")
 except IndexError:

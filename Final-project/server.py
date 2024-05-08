@@ -97,6 +97,7 @@ def karyotype(endpoint, parameters):
         code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
+
 def chromosome_length(endpoint, parameters):
     request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
     species = parameters["species"][0]
@@ -115,7 +116,8 @@ def chromosome_length(endpoint, parameters):
             'chromo': chromo,
             'length': chromo_length
         }
-        contents = read_html_template("chromosome_length.html").render(context=context)
+        #a partir de aqui es en tds igual salvo en
+        contents = read_html_template("chromosome_length.html").render(context=context) #esta linea que cm¡ambiamos el nombre del html
         code = HTTPStatus.OK
     else:
         contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)

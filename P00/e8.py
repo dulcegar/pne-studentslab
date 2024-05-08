@@ -20,6 +20,6 @@ for gene in GENES:
     filename = os.path.join("..", "sequences", gene)
     try:
         dna_sequence = seq_read_fasta(filename)
-        print(f"Gene {gene}: {most_frequent_base(dna_sequence)}")         #DUDA
+        print(f"Gene {gene}: {most_frequent_base(dna_sequence)}")
     except FileNotFoundError:
         print(f"[ERROR]: file '{filename}' not found")
