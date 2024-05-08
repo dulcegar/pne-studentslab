@@ -17,10 +17,11 @@ RESOURCE_TO_ENSEMBL_REQUEST = {
     '/listSpecies': {'resource': "/info/species", 'params': "content-type=application/json"},
     '/karyotype': {'resource': "/info/assembly", 'params': "content-type=application/json"},
     '/chromosomeLength': {'resource': "/info/assembly", 'params': "content-type=application/json"}, #tiene el mismo resorce que el karyotupe porq cuando ponga print(data) me va  asalir la misma info
-    '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"}
+    '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"} #acabamos pidiendo el recurso id
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
+GENE_ERROR = "Gene not found"
 
 
 def read_html_template(file_name):
@@ -116,12 +117,50 @@ def chromosome_length(endpoint, parameters):
             'chromo': chromo,
             'length': chromo_length
         }
-        #a partir de aqui es en tds igual salvo en
+        #a partir de aqui es en tds igual salvo en...
         contents = read_html_template("chromosome_length.html").render(context=context) #esta linea que cm¡ambiamos el nombre del html
         code = HTTPStatus.OK
     else:
         contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
         code = HTTPStatus.SERVICE_UNAVAILABLE
+    return code, contents
+
+
+def get_id(gene): #funcion que dado el nombre de un gen consulta al servidor de ensembl cual es su identificador asociado (ej: FRAT1: "EN0672382"), traduce del gen al identificador
+    resource = "/homology/symbol/human/" + gene #el recurso que solicitamos al servidor de ensembl, porq son tds asociados al ser humano(specie) y le concatenamos el gene
+    params = 'content-type=application/json;format=condensed' #en este el params es ditinto, le hemos indicado al final otro parametro mas
+    url = f"{resource}?{params}"
+    error, data = server_request(EMSEMBL_SERVER, url)
+    gene_id = None #gene_id no es nada
+    if not error: #si no hay error, tambien sirve para controlar errores, si nos mandan un gen no humano
+        gene_id = data['data'][0]['id'] # 'data' (lista) esta dentro del diccionario data y dentro de la lista 'data', sobre esa lista entramos a la posicion 0, q es un diccionario y sobre ese diccionario entramos a id
+        #tengo data, y dentro de esa lista hay un diccionario en la primera posicion
+    return gene_id
+
+
+def geneSeq(parameters):
+    endpoint = '/geneSeq'
+    gene = parameters['gene'][0]
+    gene_id = get_id(gene)  #el get_id es una funcion que dado el nombre de un gen consulta al servidor de ensembl cual es su identificador asociado
+    print(f"Gene: {gene} - Gene ID: {gene_id}") #pinto el nombre del gen y su identificador, simplemente para verlo en el servidor
+    if gene_id is not None: #si la variable gene_id tiene contenido, es decir, si es distinto de None
+        request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
+        url = f"{request['resource']}/{gene_id}?{request['params']}" #construyo la url con el id, para ahora poder hacer la culta buena con el identificador del gen que nos manden, por eso hacemos antes lo de gene_id
+        error, data = server_request(EMSEMBL_SERVER, url) #peticion al servidor de ensembl
+        if not error:
+            bases = data['seq'] #dentro de la data q me da ensembl tiene que haber un diccionario llamado seq, con todas las bases de la secuencia para que me las mande
+            context = {
+                'gene': gene,
+                'bases': bases
+            }
+            contents = read_html_template("gene_seq.html").render(context=context)
+            code = HTTPStatus.OK
+        else:
+            contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
+            code = HTTPStatus.SERVICE_UNAVAILABLE
+    else:
+        contents = handle_error(endpoint, GENE_ERROR)
+        code = HTTPStatus.NOT_FOUND
     return code, contents
 
 
@@ -150,6 +189,14 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             code, contents = karyotype(endpoint, parameters)
         elif endpoint == "/chromosomeLength":
             code, contents = chromosome_length(endpoint, parameters)
+        elif endpoint == "/geneSeq":
+            code, contents = geneSeq(parameters) #en el nivel medio lo hacemos de otra forma, le paso solo los parametros y el endpoint lo meto en su def
+        elif endpoint == "/geneInfo":
+            pass
+        elif endpoint == "/geneCalc":
+            pass
+        elif endpoint == "/geneList":
+            pass
         else:
             contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
@@ -161,6 +208,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(contents_bytes)
+
 
 #PROGRAMA PRINCIPAL
 with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
