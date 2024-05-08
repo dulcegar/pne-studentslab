@@ -15,7 +15,9 @@ HTML_FOLDER = "html"
 EMSEMBL_SERVER = "rest.ensembl.org" #nos almacenamos la ip del servidor de ensembl
 RESOURCE_TO_ENSEMBL_REQUEST = {
     '/listSpecies': {'resource': "/info/species", 'params': "content-type=application/json"},
-    '/karyotype': {'resource': "/info/assembly", 'params': "content-type=application/json"}
+    '/karyotype': {'resource': "/info/assembly", 'params': "content-type=application/json"},
+    '/chromosomeLength': {'resource': "/info/assembly", 'params': "content-type=application/json"}, #tiene el mismo resorce que el karyotupe porq cuando ponga print(data) me va  asalir la misma info
+    '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"}
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
@@ -95,17 +97,23 @@ def karyotype(endpoint, parameters):
         code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
-def chromosome_length(endpoint, parameters):  #ME QUEDA TERMINAR ESTE
+def chromosome_length(endpoint, parameters):
     request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
     species = parameters["species"][0]
+    chromo = parameters["chromo"][0]
     url = f"{request['resource']}/{species}?{request['params']}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
         print(data)
-        context = {  #hacer esto
-            'species': species,
-            'length': None,
-            'chromo.length': None
+        chromosomes = data["top_level_region"]  #extraemos de data el valor asociado a la clave top_level_region. que nos da mas info de la que necesitamos. chromosomes es un diccionario cn muchas cosas
+        chromo_length = None #inicialmente la longitud es ninguna, y en caso de q metamos un chromosome que no existe, nos pondria none
+        for chromosome in chromosomes:
+            if chromosome['name'] == chromo:   #si el chromosome (diccionario) tiene como valor el nombre name q es igual al chromo (q es lo q m han mandado). el nombre de unos de los cromosomas coincide con el chromo que me han mandado entro en el if
+                chromo_length = chromosome['length'] #me almaceno en la variable length la longitud de ese chromosoma
+                break  #para salir de forma abrupta
+        context = {
+            'chromo': chromo,
+            'length': chromo_length
         }
         contents = read_html_template("chromosome_length.html").render(context=context)
         code = HTTPStatus.OK
@@ -135,7 +143,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             file_path = os.path.join(HTML_FOLDER, "index.html")
             contents = Path(file_path).read_text()
         elif endpoint == "/listSpecies":
-            code, contents = list_species(endpoint, parameters)
+            code, contents = list_species(endpoint, parameters) #le pasamos el endpoint y los parametros, podriamos no pasarle el endpoint y meterselo dentro de cada funcion como una variable
         elif endpoint == "/karyotype":
             code, contents = karyotype(endpoint, parameters)
         elif endpoint == "/chromosomeLength":
