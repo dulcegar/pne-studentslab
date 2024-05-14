@@ -18,7 +18,9 @@ RESOURCE_TO_ENSEMBL_REQUEST = {
     '/karyotype': {'resource': "/info/assembly", 'params': "content-type=application/json"},
     '/chromosomeLength': {'resource': "/info/assembly", 'params': "content-type=application/json"}, #tiene el mismo resorce que el karyotupe porq cuando ponga print(data) me va  asalir la misma info
     '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"}, #acabamos pidiendo el recurso id
-    '/geneInfo': {'resource': "/overlap/id", 'params': "content-type=application/json;feature=gene"}
+    '/geneInfo': {'resource': "/overlap/id", 'params': "content-type=application/json;feature=gene"},
+    '/geneCalc': {'resource': "/sequence/id", 'params': "content-type=application/json"},
+    '/geneList': {'resource': "/sequence/id", 'params': "content-type=application/json"}
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
@@ -172,7 +174,7 @@ def geneInfo(parameters):
     print(f"Gene: {gene} - Gene ID: {gene_id}")
     if gene_id is not None:
         request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-        url = f"{request['resource']}/{gene_id}?{request['params']}"
+        url = f"{request['resource']}{gene_id}?{request['params']}"
         print(url)
         error, data = server_request(EMSEMBL_SERVER, url)
         if not error:
@@ -200,6 +202,8 @@ def geneInfo(parameters):
         contents = handle_error(endpoint, GENE_ERROR)
         code = HTTPStatus.NOT_FOUND
     return code, contents
+
+
 
 
 socketserver.TCPServer.allow_reuse_address = True
