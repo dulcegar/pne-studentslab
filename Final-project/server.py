@@ -174,8 +174,7 @@ def geneInfo(parameters):
     print(f"Gene: {gene} - Gene ID: {gene_id}")
     if gene_id is not None:
         request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-        url = f"{request['resource']}{gene_id}?{request['params']}"
-        print(url)
+        url = f"{request['resource']}/{gene_id}?{request['params']}"
         error, data = server_request(EMSEMBL_SERVER, url)
         if not error:
             print(f"geneInfo: {data}")
@@ -203,7 +202,51 @@ def geneInfo(parameters):
         code = HTTPStatus.NOT_FOUND
     return code, contents
 
+def geneCalc(endpoint, parameters):
+    gene = parameters["gene"][0]
+    gene_id = get_id(gene)
+    print(f"Gene: {gene} - Gene ID: {gene_id}")
+    if gene_id is not None:
+        request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
+        url = f"{request['resource']}/{gene_id}?{request['params']}"
+        error, data = server_request(EMSEMBL_SERVER, url)
+        if not error:
+            print(f"geneInfo: {data}")
+            sequence = data["seq"]
+            A = 0
+            C = 0
+            G = 0
+            T = 0
+            for base in sequence:
+                if base == "A":
+                    A += 1
+                elif base == "C":
+                    C += 1
+                elif base == "G":
+                    G += 1
+                elif base == "T":
+                    T += 1
+            total = A + C + G + T
+            base_A = round((A / total) * 100, 2)
+            base_C = round((C / total) * 100, 2)
+            base_G = round((G / total) * 100, 2)
+            base_T = round((T / total) * 100, 2)
 
+            context = {
+                "gene": gene,
+                "total_length": total,
+                "A": base_A,
+                "C": base_C,
+                "G": base_G,
+                "T": base_T,
+
+            }
+            contents = read_html_template("gene_calc.html").render(context=context)
+            code = HTTPStatus.OK
+        else:
+            contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
+            code = HTTPStatus.SERVICE_UNAVAILABLE
+    return code, contents
 
 
 socketserver.TCPServer.allow_reuse_address = True
@@ -234,9 +277,9 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif endpoint == "/geneSeq":
             code, contents = geneSeq(parameters) #en el nivel medio lo hacemos de otra forma, le paso solo los parametros y el endpoint lo meto en su def
         elif endpoint == "/geneInfo":
-            pass
+            code, contents = geneInfo(parameters)
         elif endpoint == "/geneCalc":
-            pass
+            code, contents = geneCalc(endpoint, parameters)
         elif endpoint == "/geneList":
             pass
         else:
