@@ -86,7 +86,7 @@ def list_species(endpoint, parameters): #le pasamos esto al if de listspecies, l
 
 def karyotype(endpoint, parameters):
     request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-    species = parameters["species"][0]
+    species = quote(parameters["species"][0])
     url = f"{request['resource']}/{species}?{request['params']}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
@@ -316,7 +316,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif endpoint == "/geneCalc":
             code, contents = geneCalc(endpoint, parameters)
         elif endpoint == "/geneList":
-            code, contents = geneList(endpoint, parameters)
+            code, contents = geneList(endpoint)
         else:
             contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
