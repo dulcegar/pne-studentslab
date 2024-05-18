@@ -3,7 +3,7 @@ from http import HTTPStatus
 import socketserver
 import termcolor
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, quote
 import jinja2
 import os
 import json
@@ -20,7 +20,7 @@ RESOURCE_TO_ENSEMBL_REQUEST = {
     '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"}, #acabamos pidiendo el recurso id
     '/geneInfo': {'resource': "/overlap/id", 'params': "content-type=application/json;feature=gene"},
     '/geneCalc': {'resource': "/sequence/id", 'params': "content-type=application/json"},
-    '/geneList': {'resource': "/sequence/id", 'params': "content-type=application/json"}
+    '/geneList': {'resource': "/overlap/region/human", 'params': "content-type=application/json;feature=gene"}
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
@@ -90,9 +90,11 @@ def karyotype(endpoint, parameters):
     url = f"{request['resource']}/{species}?{request['params']}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
+        karyotype = data["karyotype"]
+        species = species.replace("%20", " ")
         context = {
             'species': species,
-            'karyotype': data['karyotype']
+            'karyotype': karyotype
         }
         contents = read_html_template("karyotype.html").render(context=context)
         code = HTTPStatus.OK
@@ -243,9 +245,42 @@ def geneCalc(endpoint, parameters):
             }
             contents = read_html_template("gene_calc.html").render(context=context)
             code = HTTPStatus.OK
-        else:
-            contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
-            code = HTTPStatus.SERVICE_UNAVAILABLE
+    else:
+        contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
+        code = HTTPStatus.SERVICE_UNAVAILABLE
+    return code, contents
+
+
+def geneList(parameters):
+    chromo = parameters['chromo'][0]
+    start = int(parameters['start'][0])
+    end = int(parameters['end'][0])
+    endpoint = f"/overlap/region/human/{chromo}:{start}-{end}"
+    params = "content-type=application/json;feature=gene;feature=transcript;feature=cds;feature=exon"
+    url = f"{endpoint}?{params}"
+    error, data = server_request(EMSEMBL_SERVER, url)
+    print(data)
+    if not error:
+        data = data[0]
+        chromo = int(data["seq_region_name"])
+        start = data["start"]
+        end = data["end"]
+        genes_list = []
+        for gene in data:
+            if "external_name" in gene:
+                name = data["external_name"]
+                genes_list.append(name)
+        context = {
+            "chromo": chromo,
+            "start": start,
+            "end": end,
+            "gene_list": genes_list[0]
+        }
+        contents = read_html_template("gene_calc.html").render(context=context)
+        code = HTTPStatus.OK
+    else:
+        contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
+        code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
 
@@ -281,7 +316,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif endpoint == "/geneCalc":
             code, contents = geneCalc(endpoint, parameters)
         elif endpoint == "/geneList":
-            pass
+            code, contents = geneList(endpoint, parameters)
         else:
             contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
