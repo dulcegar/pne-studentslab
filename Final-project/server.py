@@ -276,7 +276,7 @@ def geneList(parameters):
             "end": end,
             "gene_list": genes_list[0]
         }
-        contents = read_html_template("gene_calc.html").render(context=context)
+        contents = read_html_template("gene_list.html").render(context=context)
         code = HTTPStatus.OK
     else:
         contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
