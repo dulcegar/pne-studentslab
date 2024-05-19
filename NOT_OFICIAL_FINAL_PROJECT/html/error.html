@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Error</title>
+    </head>
+    <body style="background-color: tomato;"> <!-- https://www.techonthenet.com/css/properties/background_color.php -->
+        <h1>Error in {{context.endpoint}}</h1> <!--esto es para que se pueda sustituir el tipo de error en cada caso -->
+        <p>{{context.message}}</p> <!-- tambien el tipo de mensaje es disntinto, esto lo he hecho en el def handle_error-->
+        <a href="/">Main page</a>
+    </body>
+</html>
