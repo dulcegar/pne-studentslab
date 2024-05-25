@@ -19,7 +19,8 @@ RESOURCE_TO_ENSEMBL_REQUEST = {
     '/chromosomeLength': {'resource': "/info/assembly", 'params': "content-type=application/json"}, #tiene el mismo resorce que el karyotupe porq cuando ponga print(data) me va  asalir la misma info
     '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"}, #acabamos pidiendo el recurso id
     '/geneInfo': {'resource': "/overlap/id", 'params': "content-type=application/json;feature=gene"},
-    '/geneCalc': {'resource': "/sequence/id", 'params': "content-type=application/json"}
+    '/geneCalc': {'resource': "/sequence/id", 'params': "content-type=application/json"},
+    '/sequence': {'resource': "/sequence/id", 'params': }
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
@@ -282,6 +283,10 @@ def geneList(parameters):
         code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
+#examen 2023
+def sequence(parameters):
+    endpoint = "/sequence"
+
 
 socketserver.TCPServer.allow_reuse_address = True
 
@@ -316,6 +321,8 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             code, contents = geneCalc(endpoint, parameters)
         elif endpoint == "/geneList":
             code, contents = geneList(parameters)
+        elif endpoint == "/sequence":
+            code, contents = sequence(parameters)
         else:
             contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
