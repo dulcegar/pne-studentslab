@@ -5,9 +5,9 @@
     <title>Sequence</title>
 </head>
 <body style="background-color: lightblue">
-    <h1>ID {{context.gene}} in {{context.species}}</h1>
+    <h1>ID {{context.id}} in {{context.species}}</h1>
     <ul>
-        <li>Length: {{context.length}}</li>
+        <li>Length: {{context.length}}</li>   <!-- el li es para poner un puntitoi-->
         {% if context.even_bases %}
             <p>Is even? {{context.is_even}}</p>
         {% else %}

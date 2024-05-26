@@ -10,6 +10,7 @@ import json
 import http.client
 
 
+
 PORT = 8080
 HTML_FOLDER = "html"
 EMSEMBL_SERVER = "rest.ensembl.org" #nos almacenamos la ip del servidor de ensembl
@@ -285,22 +286,44 @@ def geneList(parameters):
         code = HTTPStatus.SERVICE_UNAVAILABLE
     return code, contents
 
+
 #examen 2023
 def sequence(parameters):
-    endpoint = "/sequence"
     code = None
     content_type = None
     contents = None
-
-    ok = True
-    try:
-        species = parameters["species"][0]
-        id = parameters["id"][0]
-        even_bases = "even_bases" in parameters
-    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-    url = f"{request[resource]}/{id}?{request[params]};species={species}"
+    species = parameters["species"][0]
+    id = parameters["id"][0]
+    even_bases = "even_bases" in parameters
+    endpoint = f'/sequence/id/{id}'
+    params = 'content-type=application/json;object_type=transcript;type=cds;db_type=otherfeatures'
+    url = f"{endpoint}?{params};species={species}"
+    print(url)
     error, data = server_request(EMSEMBL_SERVER, url)
+    if not error:
+        print(f"data: {data}")
+        bases = data['seq']
+        length = len(bases)
+        if length % 2 == 0:
+            is_even = True
+        else:
+            is_even = False
 
+        context = {
+            'id': id,
+            'species': species,
+            'even_bases': even_bases,
+            'bases': str(bases),
+            'length': length,
+            'is_even': is_even
+        }
+        contents = read_html_template("sequence.html").render(context=context)
+        code = HTTPStatus.OK
+    else:
+        contents = handle_error(endpoint, ENSEMBL_COMMUNICATION_ERROR)
+        code = HTTPStatus.SERVICE_UNAVAILABLE
+
+    return code, contents, content_type
 
 
 
@@ -339,7 +362,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif endpoint == "/geneList":
             code, contents = geneList(parameters)
         elif endpoint == "/sequence":
-            code, contents = sequence(parameters)
+            code, contents, content_type = sequence(parameters)
         else:
             contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR) #handle_error = manejar el error y le pasamos la variable de resource_not...
             code = HTTPStatus.NOT_FOUND
