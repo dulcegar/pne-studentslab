@@ -20,7 +20,9 @@ RESOURCE_TO_ENSEMBL_REQUEST = {
     '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"}, #acabamos pidiendo el recurso id
     '/geneInfo': {'resource': "/overlap/id", 'params': "content-type=application/json;feature=gene"},
     '/geneCalc': {'resource': "/sequence/id", 'params': "content-type=application/json"},
-    '/sequence': {'resource': "/sequence/id", 'params': }
+    '/sequence': {'resource': "/sequence/id",
+                  'params': "content-type=application/json;object_type=transcript;"
+                            "type=cds;db_type=otherfeatures"}
 }   #diccionario que tiene como clave un recurso, pasa de recurso a ensembl y dentro de el hay otro diccionario, le pasamos el recurso/endpoint/path y asi sepa que recurso de ensembl hay q utilizar y q parametros me tiene q pasar
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
@@ -286,6 +288,21 @@ def geneList(parameters):
 #examen 2023
 def sequence(parameters):
     endpoint = "/sequence"
+    code = None
+    content_type = None
+    contents = None
+
+    ok = True
+    try:
+        species = parameters["species"][0]
+        id = parameters["id"][0]
+        even_bases = "even_bases" in parameters
+    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
+    url = f"{request[resource]}/{id}?{request[params]};species={species}"
+    error, data = server_request(EMSEMBL_SERVER, url)
+
+
+
 
 
 socketserver.TCPServer.allow_reuse_address = True
