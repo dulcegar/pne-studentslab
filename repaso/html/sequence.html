@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sequence</title>
+</head>
+<body style="background-color:  #aeb6bf ">
+    <h2>ID: {{context.id}} on the species {{context.species}}</h2>
+    <ul>
+        <li>Length: {{context.length}}</li>   <!-- el li es para poner un puntitoi-->
+        {% if context.even_bases %}
+            <p>Is even? {{context.is_even}}</p>
+        {% else %}
+            <p>Is Odd? {{not context.is_even}}</p>
+        {% endif %}
+        <li>Chromosome name: {{context.chromosome_name}}</li>
+        <textarea rows="50" cols="50">{{context.bases}}</textarea>
+    </ul>
+<a href="/">Main page</a>
+</body>
+</html>
