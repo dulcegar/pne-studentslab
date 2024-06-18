@@ -13,14 +13,6 @@ import http.client
 PORT = 8080
 HTML_FOLDER = "html"
 EMSEMBL_SERVER = "rest.ensembl.org"
-RESOURCE_TO_ENSEMBL_REQUEST = {
-    '/listSpecies': {'resource': "/info/species", 'params': "content-type=application/json"},
-    '/karyotype': {'resource': "/info/assembly", 'params': "content-type=application/json"},
-    '/chromosomeLength': {'resource': "/info/assembly", 'params': "content-type=application/json"},
-    '/geneSeq': {'resource': "/sequence/id", 'params': "content-type=application/json"},
-    '/geneInfo': {'resource': "/overlap/id", 'params': "content-type=application/json;feature=gene"},
-    '/geneCalc': {'resource': "/sequence/id", 'params': "content-type=application/json"}
-}
 RESOURCE_NOT_AVAILABLE_ERROR = "Resource not available"
 ENSEMBL_COMMUNICATION_ERROR = "Error in communication with the Ensembl server"
 GENE_ERROR = "Gene not found"
@@ -60,8 +52,9 @@ def handle_error(endpoint, message):
 
 
 def list_species(endpoint, parameters):
-    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-    url = f"{request['resource']}?{request['params']}"
+    resource = "/info/species"
+    params = "content-type=application/json"
+    url = f"{resource}?{params}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
         limit = None
@@ -84,9 +77,10 @@ def list_species(endpoint, parameters):
     return code, contents
 
 def karyotype(endpoint, parameters):
-    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
+    resource = "/info/assembly"
+    params = "content-type=application/json"
     species = quote(parameters["species"][0])
-    url = f"{request['resource']}/{species}?{request['params']}"
+    url = f"{resource}/{species}?{params}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
         karyotype = data["karyotype"]
@@ -104,10 +98,11 @@ def karyotype(endpoint, parameters):
 
 
 def chromosome_length(endpoint, parameters):
-    request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
+    resource = "/info/assembly"
+    params = "content-type=application/json"
     species = parameters["species"][0]
     chromo = parameters["chromo"][0]
-    url = f"{request['resource']}/{species}?{request['params']}"
+    url = f"{resource}/{species}?{params}"
     error, data = server_request(EMSEMBL_SERVER, url)
     if not error:
         print(data)
@@ -148,8 +143,9 @@ def geneSeq(parameters):
     gene_id = get_id(gene)
     print(f"Gene: {gene} - Gene ID: {gene_id}")
     if gene_id is not None:
-        request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-        url = f"{request['resource']}/{gene_id}?{request['params']}"
+        resource = "/sequence/id"
+        params = "content-type=application/json"
+        url = f"{resource}/{gene_id}?{params}"
         error, data = server_request(EMSEMBL_SERVER, url)
         if not error:
             bases = data['seq']
@@ -174,8 +170,9 @@ def geneInfo(parameters):
     gene_id = get_id(gene)
     print(f"Gene: {gene} - Gene ID: {gene_id}")
     if gene_id is not None:
-        request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-        url = f"{request['resource']}/{gene_id}?{request['params']}"
+        resource = "/overlap/id"
+        params = "content-type=application/json;feature=gene"
+        url = f"{resource}/{gene_id}?{params}"
         error, data = server_request(EMSEMBL_SERVER, url)
         if not error:
             print(f"geneInfo: {data}")
@@ -208,8 +205,9 @@ def geneCalc(endpoint, parameters):
     gene_id = get_id(gene)
     print(f"Gene: {gene} - Gene ID: {gene_id}")
     if gene_id is not None:
-        request = RESOURCE_TO_ENSEMBL_REQUEST[endpoint]
-        url = f"{request['resource']}/{gene_id}?{request['params']}"
+        resource = "/sequence/id"
+        params = "content-type=application/json"
+        url = f"{resource}/{gene_id}?{params}"
         error, data = server_request(EMSEMBL_SERVER, url)
         if not error:
             print(f"geneInfo: {data}")
