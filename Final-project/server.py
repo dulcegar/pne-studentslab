@@ -11,7 +11,7 @@ import http.client
 
 # Configuration
 SERVER_PORT = 8080
-TEMPLATE_DIRECTORY = "templates"
+HTML_FOLDER = "html"
 ENSEMBL_API_SERVER = "rest.ensembl.org"
 ERROR_RESOURCE_UNAVAILABLE = "Resource unavailable"
 ERROR_COMMUNICATION_ENSEMBL = "Communication error with Ensembl server"
@@ -19,7 +19,7 @@ ERROR_GENE_NOT_FOUND = "Gene not found"
 
 
 def load_template(template_name):
-    template_path = os.path.join(TEMPLATE_DIRECTORY, template_name)
+    template_path = os.path.join(HTML_FOLDER, template_name)
     template_content = Path(template_path).read_text()
     template = jinja2.Template(template_content)
     return template
@@ -51,7 +51,7 @@ def generate_error_page(api_endpoint, error_message):
     return load_template("error.html").render(context=context)
 
 
-def list_species(api_endpoint, params):
+def fetch_species_list(api_endpoint, params):
     api_resource = "/info/species"
     query_params = "content-type=application/json"
     api_url = f"{api_resource}?{query_params}"
@@ -82,7 +82,7 @@ def list_species(api_endpoint, params):
     return response_code, rendered_content
 
 
-def karyotype(api_endpoint, params):
+def fetch_karyotype(api_endpoint, params):
     api_resource = "/info/assembly"
     query_params = "content-type=application/json"
     species_name = quote(params["species"][0])
@@ -103,8 +103,7 @@ def karyotype(api_endpoint, params):
     return response_code, rendered_content
 
 
-
-def chromosome_length(api_endpoint, params):
+def fetch_chromosome_length(api_endpoint, params):
     api_resource = "/info/assembly"
     query_params = "content-type=application/json"
     species_name = params["species"][0]
@@ -144,7 +143,7 @@ def fetch_gene_id(gene_name):
 
 
 
-def geneSeq(params):
+def fetch_gene_sequence(params):
     api_endpoint = '/geneSeq'
     gene_name = params['gene'][0]
     gene_id = fetch_gene_id(gene_name)
@@ -171,8 +170,7 @@ def geneSeq(params):
     return response_code, rendered_content
 
 
-
-def geneInfo(params):
+def fetch_gene_info(params):
     api_endpoint = '/geneInfo'
     gene_name = params['gene'][0]
     gene_id = fetch_gene_id(gene_name)
@@ -208,7 +206,7 @@ def geneInfo(params):
     return response_code, rendered_content
 
 
-def geneCalc(api_endpoint, params):
+def calculate_gene_bases(api_endpoint, params):
     gene_name = params["gene"][0]
     gene_id = fetch_gene_id(gene_name)
     print(f"Gene: {gene_name} - Gene ID: {gene_id}")
@@ -250,8 +248,7 @@ def geneCalc(api_endpoint, params):
     return response_code, rendered_content
 
 
-
-def geneList(params):
+def fetch_gene_list(params):
     chromosome = params['chromo'][0]
     start = int(params['start'][0])
     end = int(params['end'][0])
@@ -280,7 +277,6 @@ def geneList(params):
     return response_code, rendered_content
 
 
-
 socketserver.TCPServer.allow_reuse_address = True
 
 
@@ -289,47 +285,48 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'green')
 
         parsed_url = urlparse(self.path)
-        endpoint = parsed_url.path
-        print(f"Endpoint: {endpoint}")
-        parameters = parse_qs(parsed_url.query)
-        print(f"Parameters: {parameters}")
+        api_endpoint = parsed_url.path
+        print(f"Endpoint: {api_endpoint}")
+        params = parse_qs(parsed_url.query)
+        print(f"Parameters: {params}")
 
-        code = HTTPStatus.OK
+        response_code = HTTPStatus.OK
         content_type = "text/html"
-        contents = ""
-        if endpoint == "/":
-            file_path = os.path.join(HTML_FOLDER, "index.html")
-            contents = Path(file_path).read_text()
-        elif endpoint == "/listSpecies":
-            code, contents = list_species(endpoint, parameters)
-        elif endpoint == "/karyotype":
-            code, contents = karyotype(endpoint, parameters)
-        elif endpoint == "/chromosomeLength":
-            code, contents = chromosome_length(endpoint, parameters)
-        elif endpoint == "/geneSeq":
-            code, contents = geneSeq(parameters)
-        elif endpoint == "/geneInfo":
-            code, contents = geneInfo(parameters)
-        elif endpoint == "/geneCalc":
-            code, contents = geneCalc(endpoint, parameters)
-        elif endpoint == "/geneList":
-            code, contents = geneList(parameters)
-        else:
-            contents = handle_error(endpoint, RESOURCE_NOT_AVAILABLE_ERROR)
-            code = HTTPStatus.NOT_FOUND
+        rendered_content = ""
 
-        self.send_response(code)
-        contents_bytes = contents.encode()
+        if api_endpoint == "/":
+            file_path = os.path.join(HTML_FOLDER, "index.html")
+            rendered_content = Path(file_path).read_text()
+        elif api_endpoint == "/listSpecies":
+            response_code, rendered_content = fetch_species_list(api_endpoint, params)
+        elif api_endpoint == "/karyotype":
+            response_code, rendered_content = fetch_karyotype(api_endpoint, params)
+        elif api_endpoint == "/chromosomeLength":
+            response_code, rendered_content = fetch_chromosome_length(api_endpoint, params)
+        elif api_endpoint == "/geneSeq":
+            response_code, rendered_content = fetch_gene_sequence(params)
+        elif api_endpoint == "/geneInfo":
+            response_code, rendered_content = fetch_gene_info(params)
+        elif api_endpoint == "/geneCalc":
+            response_code, rendered_content = calculate_gene_bases(api_endpoint, params)
+        elif api_endpoint == "/geneList":
+            response_code, rendered_content = fetch_gene_list(params)
+        else:
+            rendered_content = generate_error_page(api_endpoint, ERROR_RESOURCE_UNAVAILABLE )
+            response_code = HTTPStatus.NOT_FOUND
+
+        self.send_response(response_code)
+        content_bytes = rendered_content.encode()
         self.send_header('Content-Type', content_type)
-        self.send_header('Content-Length', str(len(contents_bytes)))
+        self.send_header('Content-Length', str(len(content_bytes)))
         self.end_headers()
 
-        self.wfile.write(contents_bytes)
+        self.wfile.write(content_bytes)
 
 
 #PROGRAMA PRINCIPAL
-with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
-    print("Serving at PORT...", PORT)
+with socketserver.TCPServer(("", SERVER_PORT), MyHTTPRequestHandler) as httpd:
+    print("Serving at PORT...", SERVER_PORT)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
