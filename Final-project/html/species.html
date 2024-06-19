@@ -9,8 +9,8 @@
         <h2>The limit you have selected is: {{context.species_limit}}</h2>
         <h3>The names of the species are:</h3>
         <ul>
-            {% for name in context.name_species %}
-            <li>{{species_names}}</li>
+            {% for name in context.species_names %}
+            <li>{{name}}</li>
             {% endfor %}
         </ul>
     <a href="/">Main page</a>
