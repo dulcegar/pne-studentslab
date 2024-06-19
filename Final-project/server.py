@@ -21,8 +21,7 @@ ERROR_GENE_NOT_FOUND = "Gene not found"
 def load_template(template_name):
     template_path = os.path.join(HTML_FOLDER, template_name)
     template_content = Path(template_path).read_text()
-    template = jinja2.Template(template_content)
-    return template
+    return jinja2.Template(template_content)
 
 
 def fetch_data_from_server(api_server, api_endpoint):
@@ -111,7 +110,6 @@ def fetch_chromosome_length(api_endpoint, params):
     api_url = f"{api_resource}/{species_name}?{query_params}"
     error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
     if not error_occurred:
-        print(api_data)
         chromosome_list = api_data["top_level_region"]
         chromosome_length = None
         for chromosome in chromosome_list:
@@ -130,7 +128,6 @@ def fetch_chromosome_length(api_endpoint, params):
     return response_code, rendered_content
 
 
-
 def fetch_gene_id(gene_name):
     api_resource = f"/homology/symbol/human/{gene_name}"
     query_params = 'content-type=application/json;format=condensed'
@@ -142,13 +139,12 @@ def fetch_gene_id(gene_name):
     return gene_identifier
 
 
-
 def fetch_gene_sequence(params):
     api_endpoint = '/geneSeq'
     gene_name = params['gene'][0]
     gene_id = fetch_gene_id(gene_name)
     print(f"Gene: {gene_name} - Gene ID: {gene_id}")
-    if gene_id is not None:
+    if gene_id:
         api_resource = "/sequence/id"
         query_params = "content-type=application/json"
         api_url = f"{api_resource}/{gene_id}?{query_params}"
@@ -175,25 +171,23 @@ def fetch_gene_info(params):
     gene_name = params['gene'][0]
     gene_id = fetch_gene_id(gene_name)
     print(f"Gene: {gene_name} - Gene ID: {gene_id}")
-    if gene_id is not None:
+
+    if gene_id:
         api_resource = "/overlap/id"
         query_params = "content-type=application/json;feature=gene"
         api_url = f"{api_resource}/{gene_id}?{query_params}"
         error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+
         if not error_occurred:
-            print(f"geneInfo: {api_data}")
             gene_data = api_data[0]
-            start = gene_data['start']
-            end = gene_data['end']
-            gene_length = end - start
-            chromosome_name = gene_data['assembly_name']
+            gene_length = gene_data['end'] - gene_data['start']
             context = {
                 'gene': gene_name,
-                'start': start,
-                'end': end,
+                'start': gene_data['start'],
+                'end': gene_data['end'],
                 'length': gene_length,
                 'id': gene_id,
-                'chromosome_name': chromosome_name
+                'chromosome_name': gene_data['assembly_name']
             }
             rendered_content = load_template("gene_info.html").render(context=context)
             response_code = HTTPStatus.OK
@@ -203,6 +197,7 @@ def fetch_gene_info(params):
     else:
         rendered_content = generate_error_page(api_endpoint, ERROR_GENE_NOT_FOUND)
         response_code = HTTPStatus.NOT_FOUND
+
     return response_code, rendered_content
 
 
@@ -210,32 +205,28 @@ def calculate_gene_bases(api_endpoint, params):
     gene_name = params["gene"][0]
     gene_id = fetch_gene_id(gene_name)
     print(f"Gene: {gene_name} - Gene ID: {gene_id}")
-    if gene_id is not None:
+
+    if gene_id:
         api_resource = "/sequence/id"
         query_params = "content-type=application/json"
         api_url = f"{api_resource}/{gene_id}?{query_params}"
         error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+
         if not error_occurred:
-            print(f"geneInfo: {api_data}")
             gene_sequence = api_data["seq"]
             base_counts = {"A": 0, "C": 0, "G": 0, "T": 0}
             for base in gene_sequence:
                 if base in base_counts:
                     base_counts[base] += 1
             total_bases = sum(base_counts.values())
-            base_percentages = {
-                "A": round((base_counts["A"] / total_bases) * 100, 2),
-                "C": round((base_counts["C"] / total_bases) * 100, 2),
-                "G": round((base_counts["G"] / total_bases) * 100, 2),
-                "T": round((base_counts["T"] / total_bases) * 100, 2),
-            }
+            base_percentages = {base: round((count / total_bases) * 100, 2) for base, count in base_counts.items()}
             context = {
                 "gene": gene_name,
                 "total_length": total_bases,
                 "A": base_percentages["A"],
                 "C": base_percentages["C"],
                 "G": base_percentages["G"],
-                "T": base_percentages["T"],
+                "T": base_percentages["T"]
             }
             rendered_content = load_template("gene_calc.html").render(context=context)
             response_code = HTTPStatus.OK
@@ -245,6 +236,7 @@ def calculate_gene_bases(api_endpoint, params):
     else:
         rendered_content = generate_error_page(api_endpoint, ERROR_GENE_NOT_FOUND)
         response_code = HTTPStatus.NOT_FOUND
+
     return response_code, rendered_content
 
 
@@ -256,13 +248,9 @@ def fetch_gene_list(params):
     query_params = "content-type=application/json;feature=gene;feature=transcript;feature=cds;feature=exon"
     api_url = f"{api_endpoint}?{query_params}"
     error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
-    print(api_data)
+
     if not error_occurred:
-        genes_list = []
-        for gene in api_data:
-            if "external_name" in gene:
-                gene_name = gene["external_name"]
-                genes_list.append(gene_name)
+        genes_list = [gene["external_name"] for gene in api_data if "external_name" in gene]
         context = {
             "chromo": chromosome,
             "start": start,
@@ -274,20 +262,20 @@ def fetch_gene_list(params):
     else:
         rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
         response_code = HTTPStatus.SERVICE_UNAVAILABLE
+
     return response_code, rendered_content
 
 
 socketserver.TCPServer.allow_reuse_address = True
 
-
 class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         termcolor.cprint(self.requestline, 'green')
-
         parsed_url = urlparse(self.path)
         api_endpoint = parsed_url.path
-        print(f"Endpoint: {api_endpoint}")
         params = parse_qs(parsed_url.query)
+
+        print(f"Endpoint: {api_endpoint}")
         print(f"Parameters: {params}")
 
         response_code = HTTPStatus.OK
@@ -312,7 +300,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif api_endpoint == "/geneList":
             response_code, rendered_content = fetch_gene_list(params)
         else:
-            rendered_content = generate_error_page(api_endpoint, ERROR_RESOURCE_UNAVAILABLE )
+            rendered_content = generate_error_page(api_endpoint, ERROR_RESOURCE_UNAVAILABLE)
             response_code = HTTPStatus.NOT_FOUND
 
         self.send_response(response_code)
@@ -323,13 +311,11 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         self.wfile.write(content_bytes)
 
-
-#PROGRAMA PRINCIPAL
+# Main program to start the server
 with socketserver.TCPServer(("", SERVER_PORT), MyHTTPRequestHandler) as httpd:
     print("Serving at PORT...", SERVER_PORT)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print()
-        print("Stopped by the user")
+        print("\nStopped by the user")
         httpd.server_close()
