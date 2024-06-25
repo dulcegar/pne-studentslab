@@ -9,7 +9,7 @@ import os
 import json
 import http.client
 
-# Configuration
+# Configuration    CAMBIAR ESTO Y EN VEZ DE LAS VARIABLES PONER A CASCOPORRO EL TEXTO EN CADA UNO
 SERVER_PORT = 8080
 HTML_FOLDER = "html"
 ENSEMBL_API_SERVER = "rest.ensembl.org"
@@ -280,7 +280,6 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         response_code = HTTPStatus.OK
         content_type = "text/html"
-        rendered_content = ""
 
         if api_endpoint == "/":
             file_path = os.path.join(HTML_FOLDER, "index.html")
