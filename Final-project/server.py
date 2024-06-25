@@ -9,7 +9,7 @@ import os
 import json
 import http.client
 
-# Configuration    CAMBIAR ESTO Y EN VEZ DE LAS VARIABLES PONER A CASCOPORRO EL TEXTO EN CADA UNO
+# Configuration    CAMBIAR ESto Y EN VEZ DE LAS VARIABLES PONER A CASCOPORRO EL TEXTO EN CADA UNO
 SERVER_PORT = 8080
 HTML_FOLDER = "html"
 ENSEMBL_API_SERVER = "rest.ensembl.org"
