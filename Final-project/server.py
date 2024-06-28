@@ -9,17 +9,10 @@ import os
 import json
 import http.client
 
-# Configuration    CAMBIAR ESto Y EN VEZ DE LAS VARIABLES PONER A CASCOPORRO EL TEXTO EN CADA UNO
 SERVER_PORT = 8080
-HTML_FOLDER = "html"
-ENSEMBL_API_SERVER = "rest.ensembl.org"
-ERROR_RESOURCE_UNAVAILABLE = "Resource unavailable"
-ERROR_COMMUNICATION_ENSEMBL = "Communication error with Ensembl server"
-ERROR_GENE_NOT_FOUND = "Gene not found"
-
 
 def load_template(template_name):
-    template_path = os.path.join(HTML_FOLDER, template_name)
+    template_path = os.path.join("html", template_name)
     template_content = Path(template_path).read_text()
     return jinja2.Template(template_content)
 
@@ -54,7 +47,7 @@ def fetch_species_list(api_endpoint, params):
     api_resource = "/info/species"
     query_params = "content-type=application/json"
     api_url = f"{api_resource}?{query_params}"
-    error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+    error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
 
     if not error_occurred:
         species_limit = None
@@ -75,7 +68,7 @@ def fetch_species_list(api_endpoint, params):
         response_code = HTTPStatus.OK
 
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+        rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
         response_code = HTTPStatus.SERVICE_UNAVAILABLE
 
     return response_code, rendered_content
@@ -86,7 +79,7 @@ def fetch_karyotype(api_endpoint, params):
     query_params = "content-type=application/json"
     species_name = quote(params["species"][0])
     api_url = f"{api_resource}/{species_name}?{query_params}"
-    error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+    error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
     if not error_occurred:
         karyotype_data = api_data["karyotype"]
         decoded_species_name = species_name.replace("%20", " ")
@@ -97,7 +90,7 @@ def fetch_karyotype(api_endpoint, params):
         rendered_content = load_template("karyotype.html").render(context=context)
         response_code = HTTPStatus.OK
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+        rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
         response_code = HTTPStatus.SERVICE_UNAVAILABLE
     return response_code, rendered_content
 
@@ -108,7 +101,7 @@ def fetch_chromosome_length(api_endpoint, params):
     species_name = params["species"][0]
     chromosome_name = params["chromo"][0]
     api_url = f"{api_resource}/{species_name}?{query_params}"
-    error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+    error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
     if not error_occurred:
         chromosome_list = api_data["top_level_region"]
         chromosome_length = None
@@ -123,7 +116,7 @@ def fetch_chromosome_length(api_endpoint, params):
         rendered_content = load_template("chromosome_length.html").render(context=context)
         response_code = HTTPStatus.OK
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+        rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
         response_code = HTTPStatus.SERVICE_UNAVAILABLE
     return response_code, rendered_content
 
@@ -132,7 +125,7 @@ def fetch_gene_id(gene_name):
     api_resource = f"/homology/symbol/human/{gene_name}"
     query_params = 'content-type=application/json;format=condensed'
     api_url = f"{api_resource}?{query_params}"
-    error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+    error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
     gene_identifier = None
     if not error_occurred:
         gene_identifier = api_data['data'][0]['id']
@@ -148,7 +141,7 @@ def fetch_gene_sequence(params):
         api_resource = "/sequence/id"
         query_params = "content-type=application/json"
         api_url = f"{api_resource}/{gene_id}?{query_params}"
-        error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+        error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
         if not error_occurred:
             gene_sequence = api_data['seq']
             context = {
@@ -158,10 +151,10 @@ def fetch_gene_sequence(params):
             rendered_content = load_template("gene_seq.html").render(context=context)
             response_code = HTTPStatus.OK
         else:
-            rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+            rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
             response_code = HTTPStatus.SERVICE_UNAVAILABLE
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_GENE_NOT_FOUND)
+        rendered_content = generate_error_page(api_endpoint, "Gene not found")
         response_code = HTTPStatus.NOT_FOUND
     return response_code, rendered_content
 
@@ -176,7 +169,7 @@ def fetch_gene_info(params):
         api_resource = "/overlap/id"
         query_params = "content-type=application/json;feature=gene"
         api_url = f"{api_resource}/{gene_id}?{query_params}"
-        error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+        error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
 
         if not error_occurred:
             gene_data = api_data[0]
@@ -192,10 +185,10 @@ def fetch_gene_info(params):
             rendered_content = load_template("gene_info.html").render(context=context)
             response_code = HTTPStatus.OK
         else:
-            rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+            rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
             response_code = HTTPStatus.SERVICE_UNAVAILABLE
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_GENE_NOT_FOUND)
+        rendered_content = generate_error_page(api_endpoint, "Gene not found")
         response_code = HTTPStatus.NOT_FOUND
 
     return response_code, rendered_content
@@ -210,7 +203,7 @@ def calculate_gene_bases(api_endpoint, params):
         api_resource = "/sequence/id"
         query_params = "content-type=application/json"
         api_url = f"{api_resource}/{gene_id}?{query_params}"
-        error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+        error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
 
         if not error_occurred:
             gene_sequence = api_data["seq"]
@@ -231,10 +224,10 @@ def calculate_gene_bases(api_endpoint, params):
             rendered_content = load_template("gene_calc.html").render(context=context)
             response_code = HTTPStatus.OK
         else:
-            rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+            rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
             response_code = HTTPStatus.SERVICE_UNAVAILABLE
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_GENE_NOT_FOUND)
+        rendered_content = generate_error_page(api_endpoint, "Gene not found")
         response_code = HTTPStatus.NOT_FOUND
 
     return response_code, rendered_content
@@ -247,7 +240,7 @@ def fetch_gene_list(params):
     api_endpoint = f"/overlap/region/human/{chromosome}:{start}-{end}"
     query_params = "content-type=application/json;feature=gene;feature=transcript;feature=cds;feature=exon"
     api_url = f"{api_endpoint}?{query_params}"
-    error_occurred, api_data = fetch_data_from_server(ENSEMBL_API_SERVER, api_url)
+    error_occurred, api_data = fetch_data_from_server("rest.ensembl.org", api_url)
 
     if not error_occurred:
         genes_list = [gene["external_name"] for gene in api_data if "external_name" in gene]
@@ -260,7 +253,7 @@ def fetch_gene_list(params):
         rendered_content = load_template("gene_list.html").render(context=context)
         response_code = HTTPStatus.OK
     else:
-        rendered_content = generate_error_page(api_endpoint, ERROR_COMMUNICATION_ENSEMBL)
+        rendered_content = generate_error_page(api_endpoint, "Communication error with Ensembl server")
         response_code = HTTPStatus.SERVICE_UNAVAILABLE
 
     return response_code, rendered_content
@@ -282,7 +275,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         content_type = "text/html"
 
         if api_endpoint == "/":
-            file_path = os.path.join(HTML_FOLDER, "index.html")
+            file_path = os.path.join("html", "index.html")
             rendered_content = Path(file_path).read_text()
         elif api_endpoint == "/listSpecies":
             response_code, rendered_content = fetch_species_list(api_endpoint, params)
@@ -299,7 +292,7 @@ class MyHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif api_endpoint == "/geneList":
             response_code, rendered_content = fetch_gene_list(params)
         else:
-            rendered_content = generate_error_page(api_endpoint, ERROR_RESOURCE_UNAVAILABLE)
+            rendered_content = generate_error_page(api_endpoint, "Resource unavailable")
             response_code = HTTPStatus.NOT_FOUND
 
         self.send_response(response_code)
